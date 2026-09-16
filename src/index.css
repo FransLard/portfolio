@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #0b2420;
+    --bg-secondary: #0a3f38;
+    --card-surface: #0e4f45;
+    --card-hover: #13665a;
+    --card-border: #1e7d6f;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-sand: #f3d9ae;
+    --accent-blue: #0e9384;
+    --accent-blue-hover: #0b6e63;
+    --accent-water: #3ed6a4;
+    --accent-sand: #e0a458;
+    --accent-sand-hover: #c98a3e;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  code,
+  pre {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b2420;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e7d6f;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0e9384;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+@keyframes waveWaterRoll {
+  0% {
+    background-position: 0px 0px, 0% 50%;
+  }
+
+  100% {
+    background-position: 120px 0px, 0% 50%;
+  }
+}
+
+@keyframes waveWaterRiseAndRoll {
+  0% {
+    background-position: 0px 35px, 0% 0%;
+  }
+
+  28% {
+    background-position: 25px 0px, 0% 50%;
+  }
+
+  100% {
+    background-position: 145px 0px, 0% 50%;
+  }
+}
+
+.wave-text-half {
+  position: relative;
+  display: inline-block;
+  color: #f8fafc;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 40' preserveAspectRatio='none'%3E%3Cpath d='M0,17 C30,10 60,24 90,17 C105,13 115,21 120,17 L120,40 L0,40 Z' fill='%237df0c6'/%3E%3Cpath d='M0,20 C30,14 60,26 90,20 C105,17 115,23 120,20 L120,40 L0,40 Z' fill='%230e9384'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #ffffff 0%, #ffffff 49%, #0e9384 50%, #0a3f38 100%);
+  background-size: 120px 100%, 100% 200%;
+  background-position: 0px 35px, 0% 0%;
+  background-repeat: repeat-x, no-repeat;
+  transition: font-weight 0.2s ease;
+}
+
+.wave-text-half:hover {
+  animation: waveWaterRiseAndRoll 2.4s ease-out infinite;
+}
+
+.wave-text-half.is-active {
+  background-position: 0px 0px, 0% 50%;
+  animation: waveWaterRoll 2s linear infinite;
+  font-weight: 700;
+}
