@@ -34,7 +34,7 @@ export const FloodWaveOverlay: React.FC<FloodWaveOverlayProps> = ({ isFlooding }
                 fill="none"
                 preserveAspectRatio="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-full h-full drop-shadow-[0_0_35px_rgba(2,88,122,0.6)]"
+                className="w-full h-full"
               >
                 <defs>
                   <linearGradient id="deepWaveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -87,7 +87,7 @@ export const FloodWaveOverlay: React.FC<FloodWaveOverlayProps> = ({ isFlooding }
               </svg>
 
               <div className="absolute right-0 inset-y-0 w-36 overflow-visible pointer-events-none">
-                {[...Array(28)].map((_, i) => (
+                {[...Array(12)].map((_, i) => (
                   <motion.div
                     key={i}
                     initial={{ opacity: 0, x: 0, y: (i * 32) % 850 }}
@@ -101,7 +101,7 @@ export const FloodWaveOverlay: React.FC<FloodWaveOverlayProps> = ({ isFlooding }
                       repeat: Infinity,
                       delay: (i * 0.035) % 1.1
                     }}
-                    className="absolute w-3.5 h-3.5 rounded-full bg-white shadow-lg blur-[0.4px]"
+                    className="absolute w-3.5 h-3.5 rounded-full bg-white"
                   />
                 ))}
               </div>

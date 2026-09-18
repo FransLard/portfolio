@@ -52,7 +52,7 @@ export const RebuildConstructionOverlay: React.FC<RebuildConstructionOverlayProp
           exit={{ opacity: 0, pointerEvents: 'none', transition: { duration: 0.3 } }}
           className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden pointer-events-auto select-none"
         >
-          <div className="absolute inset-0 bg-[#fff3df]/92 backdrop-blur-xl" />
+          <div className="absolute inset-0 bg-[#fff3df]" />
 
           <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center">
 
@@ -63,7 +63,7 @@ export const RebuildConstructionOverlay: React.FC<RebuildConstructionOverlayProp
               transition={{ type: 'spring', stiffness: 140, damping: 16 }}
               className="absolute -top-16 -left-16 w-[55vw] h-[55vh]"
             >
-              <svg viewBox="0 0 400 300" fill="none" className="w-full h-full drop-shadow-2xl">
+              <svg viewBox="0 0 400 300" fill="none" className="w-full h-full">
                 <circle cx="120" cy="120" r="90" fill="#ffffff" />
                 <circle cx="220" cy="100" r="85" fill="#fffffb" />
                 <circle cx="290" cy="160" r="80" fill="#fef7dc" />
@@ -79,7 +79,7 @@ export const RebuildConstructionOverlay: React.FC<RebuildConstructionOverlayProp
               transition={{ type: 'spring', stiffness: 140, damping: 16, delay: 0.05 }}
               className="absolute -top-16 -right-16 w-[60vw] h-[60vh]"
             >
-              <svg viewBox="0 0 400 300" fill="none" className="w-full h-full drop-shadow-2xl">
+              <svg viewBox="0 0 400 300" fill="none" className="w-full h-full">
                 <circle cx="260" cy="110" r="95" fill="#ffffff" />
                 <circle cx="160" cy="100" r="85" fill="#fffffb" />
                 <circle cx="100" cy="170" r="80" fill="#fef7dc" />
@@ -95,7 +95,7 @@ export const RebuildConstructionOverlay: React.FC<RebuildConstructionOverlayProp
               transition={{ type: 'spring', stiffness: 140, damping: 16, delay: 0.08 }}
               className="absolute -bottom-16 -left-16 w-[55vw] h-[55vh]"
             >
-              <svg viewBox="0 0 400 300" fill="none" className="w-full h-full drop-shadow-2xl">
+              <svg viewBox="0 0 400 300" fill="none" className="w-full h-full">
                 <circle cx="140" cy="180" r="90" fill="#ffffff" />
                 <circle cx="230" cy="190" r="85" fill="#fffffb" />
                 <circle cx="280" cy="120" r="80" fill="#fef7dc" />
@@ -111,7 +111,7 @@ export const RebuildConstructionOverlay: React.FC<RebuildConstructionOverlayProp
               transition={{ type: 'spring', stiffness: 140, damping: 16, delay: 0.1 }}
               className="absolute -bottom-16 -right-16 w-[60vw] h-[60vh]"
             >
-              <svg viewBox="0 0 400 300" fill="none" className="w-full h-full drop-shadow-2xl">
+              <svg viewBox="0 0 400 300" fill="none" className="w-full h-full">
                 <circle cx="250" cy="180" r="95" fill="#ffffff" />
                 <circle cx="150" cy="190" r="90" fill="#fffffb" />
                 <circle cx="110" cy="110" r="80" fill="#fef7dc" />
@@ -134,7 +134,7 @@ export const RebuildConstructionOverlay: React.FC<RebuildConstructionOverlayProp
               }}
               className="absolute inset-0 m-auto w-[85vw] sm:w-[70vw] max-w-4xl h-[65vh] pointer-events-none"
             >
-              <svg viewBox="0 0 600 450" fill="none" className="w-full h-full drop-shadow-2xl">
+              <svg viewBox="0 0 600 450" fill="none" className="w-full h-full">
                 <circle cx="300" cy="225" r="140" fill="#ffffff" />
                 <circle cx="190" cy="190" r="115" fill="#fffffb" />
                 <circle cx="410" cy="190" r="120" fill="#ffffff" />
@@ -161,7 +161,7 @@ export const RebuildConstructionOverlay: React.FC<RebuildConstructionOverlayProp
                   duration: 0.8 + (i % 4) * 0.2,
                   delay: i * 0.12
                 }}
-                className="absolute w-20 h-20 rounded-full bg-white/85 shadow-lg blur-[2px]"
+                className="absolute w-20 h-20 rounded-full bg-white/85"
               />
             ))}
           </div>
@@ -180,7 +180,7 @@ export const RebuildConstructionOverlay: React.FC<RebuildConstructionOverlayProp
                   duration: 0.32,
                   ease: 'easeInOut'
                 }}
-                className="absolute left-0 p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-[#f59e0b] text-white shadow-2xl border-4 border-white drop-shadow-xl"
+                className="absolute left-0 p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-[#f59e0b] text-white border-4 border-white"
               >
                 <Hammer className="w-8 h-8 sm:w-10 sm:h-10" />
               </motion.div>
@@ -195,7 +195,7 @@ export const RebuildConstructionOverlay: React.FC<RebuildConstructionOverlayProp
                   duration: 0.5,
                   ease: 'easeInOut'
                 }}
-                className="p-4 sm:p-6 rounded-[28px] sm:rounded-[32px] bg-[#0f172a] text-[#f59e0b] shadow-2xl border-4 border-white"
+                className="p-4 sm:p-6 rounded-[28px] sm:rounded-[32px] bg-[#0f172a] text-[#f59e0b] border-4 border-white"
               >
                 <HardHat className="w-10 h-10 sm:w-14 sm:h-14" />
               </motion.div>
@@ -211,7 +211,7 @@ export const RebuildConstructionOverlay: React.FC<RebuildConstructionOverlayProp
                   duration: 0.36,
                   ease: 'easeInOut'
                 }}
-                className="absolute right-0 p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-[#0e9384] text-white shadow-2xl border-4 border-white drop-shadow-xl"
+                className="absolute right-0 p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-[#0e9384] text-white border-4 border-white"
               >
                 <Wrench className="w-8 h-8 sm:w-10 sm:h-10" />
               </motion.div>

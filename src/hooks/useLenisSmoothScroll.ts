@@ -16,6 +16,17 @@ export function startLenisScroll(): void {
   }
 }
 
+export function scrollToSectionLenis(id: string): void {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (globalLenisInstance) {
+    globalLenisInstance.scrollTo(el, { offset: -76, duration: 1.4 });
+  } else {
+    const top = el.getBoundingClientRect().top + window.pageYOffset - 76;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+}
+
 export function useLenisSmoothScroll(): void {
   useEffect(() => {
     const lenis = new Lenis({

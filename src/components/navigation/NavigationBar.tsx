@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Copy, Check, Menu, X } from 'lucide-react';
 import { useScrollPosition } from '../../hooks/useScrollPosition';
+import { scrollToSectionLenis } from '../../hooks/useLenisSmoothScroll';
 import { useClipboard } from '../../hooks/useClipboard';
 import { profileData } from '../../data/portfolioData';
 import { BrandLogo } from '../common/BrandLogo';
 
 export const NavigationBar: React.FC = () => {
-  const { isScrolled, scrollToSection } = useScrollPosition();
+  const { isScrolled } = useScrollPosition();
   const { copied, copy } = useClipboard();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('about');
@@ -81,20 +82,21 @@ export const NavigationBar: React.FC = () => {
     isManualClickRef.current = true;
     setActiveSection(id);
     updatePill(id);
-    scrollToSection(id);
+
     setMobileMenuOpen(false);
+    window.setTimeout(() => scrollToSectionLenis(id), 60);
 
     if (manualClickTimerRef.current) clearTimeout(manualClickTimerRef.current);
     manualClickTimerRef.current = setTimeout(() => {
       isManualClickRef.current = false;
-    }, 850);
+    }, 1500);
   };
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         isScrolled
-          ? 'bg-[#0a3f38]/92 backdrop-blur-xl border-b border-[#3ed6a4]/35 py-3 shadow-[0_8px_32px_rgba(10,63,56,0.45)]'
+          ? 'bg-[#052e4f] border-b border-[#a8dcf0]/30 py-3 shadow-[0_4px_16px_rgba(5,46,79,0.4)]'
           : 'bg-transparent py-4 sm:py-5'
       }`}
     >
@@ -107,7 +109,7 @@ export const NavigationBar: React.FC = () => {
           <BrandLogo size="md" withText />
         </button>
 
-        <nav className="hidden md:flex items-center relative bg-white/15 hover:bg-white/20 border border-white/30 p-1.5 rounded-full backdrop-blur-xl shadow-[0_4px_24px_rgba(2,132,199,0.2)] transition-all">
+        <nav className="hidden md:flex items-center relative bg-[#052e4f]/85 border border-white/25 p-1.5 rounded-full transition-all">
           {pillStyle.width > 0 && (
             <div
               className="absolute top-1.5 bottom-1.5 rounded-full bg-white/25 border border-white/40 shadow-inner pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
@@ -149,7 +151,7 @@ export const NavigationBar: React.FC = () => {
           <button
             type="button"
             onClick={() => copy(profileData.contact.email)}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 hover:bg-white/25 border border-white/30 hover:border-[#fff3df] text-xs font-mono text-white shadow-md transition-all backdrop-blur-xl cursor-pointer group active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#052e4f]/85 hover:bg-[#0a5b85] border border-white/25 hover:border-[#fff3df] text-xs font-mono text-white transition-all cursor-pointer group active:scale-95"
             title="Salin email"
           >
             {copied ? (
@@ -170,7 +172,7 @@ export const NavigationBar: React.FC = () => {
           <button
             type="button"
             onClick={() => copy(profileData.contact.email)}
-            className="p-2.5 rounded-xl bg-white/15 border border-white/30 text-white active:scale-95 transition-transform backdrop-blur-md shadow-sm"
+            className="p-2.5 rounded-xl bg-[#052e4f]/85 border border-white/25 text-white active:scale-95 transition-transform"
             aria-label="Salin email"
           >
             {copied ? <Check className="w-4 h-4 text-[#fff3df]" /> : <Copy className="w-4 h-4 text-[#fff3df]" />}
@@ -178,7 +180,7 @@ export const NavigationBar: React.FC = () => {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2.5 rounded-xl bg-white/15 border border-white/30 text-white active:scale-95 transition-transform backdrop-blur-md shadow-sm"
+            className="p-2.5 rounded-xl bg-[#052e4f]/85 border border-white/25 text-white active:scale-95 transition-transform"
             aria-label="Buka menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -192,19 +194,26 @@ export const NavigationBar: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#0a3f38]/95 backdrop-blur-2xl border-b border-[#3ed6a4]/35 px-6 py-4 mt-2 shadow-xl"
+            className="md:hidden bg-[#052e4f] border-b border-[#a8dcf0]/30 px-6 py-4 mt-2"
           >
             <div className="flex flex-col gap-2">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => handleNavClick(item.id)}
-                  className="w-full text-left py-2.5 px-3.5 rounded-xl text-sm font-semibold text-white hover:text-[#fff3df] hover:bg-white/15 transition-colors"
-                >
-                  {item.label}
-                </button>
-              ))}
+              {navItems.map((item) => {
+                const isActive = activeSection === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => handleNavClick(item.id)}
+                    className={`w-full text-left py-2.5 px-3.5 rounded-xl text-sm font-semibold transition-colors touch-manipulation ${
+                      isActive
+                        ? 'bg-white/15 text-white'
+                        : 'text-white/85 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
             </div>
           </motion.div>
         )}

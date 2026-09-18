@@ -36,7 +36,7 @@ export const FlagshipSlideCard: React.FC<FlagshipSlideCardProps> = ({
   return (
     <motion.div
       style={{ y: yMotion, opacity: opacityMotion, zIndex }}
-      className="absolute inset-0 w-full h-full flex flex-col justify-between overflow-hidden select-none bg-[#0e9384] shadow-[0_-8px_24px_rgba(15,23,42,0.35)]"
+      className="absolute inset-0 w-full h-full flex flex-col justify-between overflow-hidden select-none bg-[#052e4f] shadow-[0_-8px_24px_rgba(15,23,42,0.35)]"
     >
 
       <AnimatedOceanSlideBackground depthLevel={depth} />
@@ -44,7 +44,7 @@ export const FlagshipSlideCard: React.FC<FlagshipSlideCardProps> = ({
       <div className="relative z-10 max-w-7xl mx-auto w-full pt-20 sm:pt-24 px-6 sm:px-12 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#ffc53d] text-[#0f172a] text-xs font-mono font-black border-2 border-[#0f172a] shadow-[3px_3px_0px_#0f172a]">
-            <span>0{index + 1}
+            <span>0{index + 1}</span>
           </div>
 
           <span className="text-xs font-mono font-bold text-[#0f172a] bg-[#fffffb]/90 px-3 py-1 rounded-lg border border-[#0f172a]/30 hidden sm:inline-block">
@@ -183,10 +183,17 @@ export const FlagshipSlideCard: React.FC<FlagshipSlideCardProps> = ({
               className="aspect-[16/10] w-full shadow-[8px_8px_0px_#0f172a] transition-shadow duration-300 group-hover:shadow-[10px_10px_0px_#0f172a]"
             />
 
-            <div className="absolute bottom-5 right-5 px-3.5 py-1.5 rounded-xl bg-[#ffc53d] border-2 border-[#0f172a] text-xs font-mono font-black text-[#0f172a] shadow-[3px_3px_0px_#0f172a] opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2 pointer-events-none">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectProject(project);
+              }}
+              className="absolute bottom-5 right-5 z-10 px-3.5 py-1.5 rounded-xl bg-[#ffc53d] hover:bg-[#facc15] border-2 border-[#0f172a] text-xs font-mono font-black text-[#0f172a] shadow-[3px_3px_0px_#0f172a] opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-within:opacity-100 focus-visible:opacity-100 transition-opacity flex items-center gap-2 cursor-pointer"
+            >
               <Layers className="w-3.5 h-3.5" />
               <span>Buka Arsitektur Sistem</span>
-            </div>
+            </button>
           </div>
         </div>
       </div>

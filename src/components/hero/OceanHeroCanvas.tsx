@@ -45,6 +45,7 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
     const sharkRef = useRef<Shark>({ active: true, initialized: false, x: 0, y: 0, dir: 1, speed: 110, nextSpawn: 0, lastWake: 0, diving: 0 });
     const animRef = useRef<number | null>(null);
     const timeRef = useRef<number>(0);
+    const startRef = useRef<number>(0);
 
     const triggerSplash = (clientX: number, clientY: number, intensity: number = 1) => {
       const canvas = canvasRef.current;
@@ -121,24 +122,51 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
       if (!ctx) return;
 
       let isRunning = true;
+      let isVisible = true;
+      const sizeRef = { w: 0, h: 0 };
+      const isMobile = window.innerWidth < 640;
+
+      const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 1.5);
 
       const handleResize = () => {
         if (!canvas) return;
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
         const rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr;
-        ctx.scale(dpr, dpr);
+        sizeRef.w = rect.width;
+        sizeRef.h = rect.height;
+        canvas.width = Math.floor(rect.width * dpr);
+        canvas.height = Math.floor(rect.height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       };
 
       handleResize();
       window.addEventListener('resize', handleResize);
 
-      const render = () => {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          isVisible = entry.isIntersecting;
+        },
+        { threshold: 0 }
+      );
+      observer.observe(canvas);
+
+      let lastFrame = 0;
+
+      const frameInterval = isMobile ? 33 : 16;
+
+      const render = (now: number = 0) => {
         if (!isRunning || !canvas) return;
-        const rect = canvas.getBoundingClientRect();
-        const width = rect.width;
-        const height = rect.height;
+        animRef.current = requestAnimationFrame(render);
+        if (!isVisible) return;
+        if (now - lastFrame < frameInterval) return;
+        lastFrame = now;
+        const width = sizeRef.w;
+        const height = sizeRef.h;
+        if (!width || !height) return;
+
+        if (!startRef.current) startRef.current = now;
+        const elapsedSec = (now - startRef.current) / 1000;
+
+        const rockTilt = Math.sin((elapsedSec * Math.PI * 2) / 3.2) * 0.035;
 
         ctx.clearRect(0, 0, width, height);
         timeRef.current += 0.014;
@@ -153,16 +181,16 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
         };
 
         const oceanGrad = ctx.createLinearGradient(0, 0, 0, shoreBaseY);
-        oceanGrad.addColorStop(0, '#0a3f38');
-        oceanGrad.addColorStop(0.35, '#0e9384');
-        oceanGrad.addColorStop(0.70, '#1abf9c');
-        oceanGrad.addColorStop(1, '#3ed6a4');
+        oceanGrad.addColorStop(0, '#052e4f');
+        oceanGrad.addColorStop(0.35, '#0a5b85');
+        oceanGrad.addColorStop(0.70, '#1288b0');
+        oceanGrad.addColorStop(1, '#35b6b2');
         ctx.fillStyle = oceanGrad;
         ctx.fillRect(0, 0, width, height);
 
         ctx.save();
         ctx.globalAlpha = 0.07;
-        ctx.fillStyle = '#fff3df';
+        ctx.fillStyle = '#dff3ff';
         for (let i = 0; i < 4; i++) {
           const patchX = (width * 0.25 * i + Math.sin(t * 0.15 + i) * 20) % width;
           const patchY = height * 0.32 + (i % 2) * (height * 0.12);
@@ -175,7 +203,7 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
         const wave1Y = height * 0.26;
         ctx.save();
         ctx.beginPath();
-        for (let x = 0; x <= width; x += 4) {
+        for (let x = 0; x <= width; x += 8) {
           const cy = wave1Y + Math.sin(x * 0.005 + t * 0.45) * 12 + Math.cos(x * 0.009 - t * 0.3) * 5;
           if (x === 0) ctx.moveTo(x, cy);
           else ctx.lineTo(x, cy);
@@ -188,7 +216,7 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
         const wave2Y = height * 0.45;
         ctx.save();
         ctx.beginPath();
-        for (let x = 0; x <= width; x += 4) {
+        for (let x = 0; x <= width; x += 8) {
           const cy = wave2Y + Math.sin(x * 0.006 + t * 0.55 + 1.5) * 14 + Math.sin(x * 0.012 - t * 0.25) * 6;
           if (x === 0) ctx.moveTo(x, cy);
           else ctx.lineTo(x, cy);
@@ -202,28 +230,28 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
         ctx.beginPath();
         ctx.moveTo(0, height);
         ctx.lineTo(0, getTideY(0));
-        for (let x = 0; x <= width; x += 3) {
+        for (let x = 0; x <= width; x += 8) {
           ctx.lineTo(x, getTideY(x));
         }
         ctx.lineTo(width, height);
         ctx.closePath();
-        ctx.fillStyle = '#fff3df';
+        ctx.fillStyle = '#f4e3bb';
         ctx.fill();
         ctx.restore();
 
         ctx.save();
         ctx.beginPath();
-        for (let x = 0; x <= width; x += 3) {
+        for (let x = 0; x <= width; x += 8) {
           const cy = getTideY(x);
           if (x === 0) ctx.moveTo(x, cy + 2);
           else ctx.lineTo(x, cy + 2);
         }
-        ctx.strokeStyle = '#ecd0a0';
+        ctx.strokeStyle = '#d9bd8a';
         ctx.lineWidth = 4.0;
         ctx.stroke();
 
         ctx.beginPath();
-        for (let x = 0; x <= width; x += 3) {
+        for (let x = 0; x <= width; x += 8) {
           const cy = getTideY(x);
           if (x === 0) ctx.moveTo(x, cy);
           else ctx.lineTo(x, cy);
@@ -245,23 +273,28 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
         ctx.restore();
 
         const sh = sharkRef.current;
+
+        const isNarrow = width < 640;
         if (!sh.initialized) {
           sh.initialized = true;
           sh.dir = 1;
-          sh.x = width * 0.22;
-          sh.y = height * 0.56;
+          sh.x = isNarrow ? width * 0.5 : width * 0.22;
+          sh.y = isNarrow ? height * 0.22 : height * 0.56;
           sh.speed = 95 + Math.random() * 40;
         }
 
-        if (sh.x > width + 110) sh.x = width + 100;
-        if (sh.x < -110) sh.x = -100;
-
         if (sh.active) {
-          sh.x += sh.dir * sh.speed * 0.014;
+
+          const d = 1;
+          sh.dir = 1;
+          sh.x += sh.speed * 0.014;
+
+          if (sh.x > width + 110) {
+            sh.x = -110;
+            sh.y = isNarrow ? height * (0.18 + Math.random() * 0.08) : height * (0.52 + Math.random() * 0.1);
+          }
 
           if (sh.diving > 0) sh.diving -= 0.014;
-
-          const d = sh.dir;
 
           const diveK = sh.diving > 0 ? 1 : 0;
           const bobY = sh.y + Math.sin(t * 3) * 2 + diveK * 12;
@@ -269,17 +302,21 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
           const tailX = sh.x - d * 42;
 
           ctx.save();
+
+          ctx.translate(sh.x, bobY);
+          ctx.rotate(rockTilt * d);
+          ctx.translate(-sh.x, -bobY);
           ctx.globalAlpha = sh.diving > 0 ? 0.35 : 1;
 
           ctx.globalAlpha = (sh.diving > 0 ? 0.15 : 0.32);
-          ctx.fillStyle = '#083344';
+          ctx.fillStyle = '#0b2a3a';
           ctx.beginPath();
           ctx.ellipse(sh.x, bobY + 9, 44, 10, 0, 0, Math.PI * 2);
           ctx.fill();
           ctx.globalAlpha = sh.diving > 0 ? 0.35 : 1;
 
-          ctx.fillStyle = '#0e5a6d';
-          ctx.strokeStyle = '#083344';
+          ctx.fillStyle = '#54707f';
+          ctx.strokeStyle = '#33454f';
           ctx.lineWidth = 1.5;
           ctx.lineJoin = 'round';
           ctx.beginPath();
@@ -305,14 +342,6 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
           ctx.ellipse(sh.x, bobY + 4, 17, 3.5, 0, 0, Math.PI * 2);
           ctx.fill();
           ctx.restore();
-
-          if ((d === 1 && sh.x > width - 30) || (d === -1 && sh.x < 30)) {
-            if (sh.diving <= 0) {
-              sh.diving = 1.4;
-              sh.dir = (d === 1 ? -1 : 1);
-              sh.y = height * (0.52 + Math.random() * 0.1);
-            }
-          }
         }
 
         for (let i = ripplesRef.current.length - 1; i >= 0; i--) {
@@ -334,7 +363,7 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
 
           ctx.beginPath();
           ctx.ellipse(r.x, r.y, r.radius * 0.68, r.radius * 0.28, 0, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(125, 240, 198, ${r.alpha * 0.75})`;
+          ctx.strokeStyle = `rgba(168, 220, 240, ${r.alpha * 0.75})`;
           ctx.lineWidth = 1.8;
           ctx.stroke();
           ctx.restore();
@@ -356,13 +385,9 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
           ctx.beginPath();
           ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(255, 255, 255, ${d.alpha})`;
-          ctx.shadowColor = '#7df0c6';
-          ctx.shadowBlur = 6;
           ctx.fill();
           ctx.restore();
         }
-
-        animRef.current = requestAnimationFrame(render);
       };
 
       animRef.current = requestAnimationFrame(render);
@@ -370,6 +395,7 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
       return () => {
         isRunning = false;
         if (animRef.current) cancelAnimationFrame(animRef.current);
+        observer.disconnect();
         window.removeEventListener('resize', handleResize);
       };
     }, []);

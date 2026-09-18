@@ -39,13 +39,13 @@ export const WelcomeAnimation = ({ onComplete }: WelcomeAnimationProps) => {
         animate={{ opacity: phase === 'dive' ? 0 : 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.65, ease: 'easeInOut' }}
-        className="fixed inset-0 z-50 overflow-hidden pointer-events-auto select-none bg-[#0b2420]"
+        className="fixed inset-0 z-50 overflow-hidden pointer-events-auto select-none bg-[#031d33]"
       >
         <motion.div
           initial={{ y: '100%' }}
           animate={{ y: phase === 'sweep' ? '0%' : '0%' }}
           transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-0 bg-gradient-to-t from-[#0a3f38] via-[#0e9384] to-[#1abf9c]"
+          className="absolute inset-0 bg-gradient-to-t from-[#052e4f] via-[#0a5b85] to-[#1288b0]"
         >
           <div className="absolute -top-24 inset-x-0 h-24">
             <svg
@@ -56,7 +56,7 @@ export const WelcomeAnimation = ({ onComplete }: WelcomeAnimationProps) => {
             >
               <path
                 d="M0 60 C320 120, 640 0, 960 60 C1200 100, 1360 40, 1440 60 L1440 120 L0 120 Z"
-                fill="#1abf9c"
+                fill="#1288b0"
               />
             </svg>
           </div>
@@ -66,7 +66,7 @@ export const WelcomeAnimation = ({ onComplete }: WelcomeAnimationProps) => {
           initial={{ y: '100%' }}
           animate={{ y: phase === 'sweep' ? '0%' : '0%' }}
           transition={{ duration: 1.15, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-0 bg-gradient-to-t from-[#0e9384] via-[#1abf9c] to-[#3ed6a4]"
+          className="absolute inset-0 bg-gradient-to-t from-[#0a5b85] via-[#1288b0] to-[#35b6b2]"
         >
           <div className="absolute -top-28 inset-x-0 h-28">
             <svg
@@ -77,7 +77,7 @@ export const WelcomeAnimation = ({ onComplete }: WelcomeAnimationProps) => {
             >
               <path
                 d="M0 40 C360 0, 720 100, 1080 30 C1260 0, 1380 60, 1440 40 L1440 120 L0 120 Z"
-                fill="#3ed6a4"
+                fill="#35b6b2"
               />
               <path
                 d="M0 40 C360 0, 720 100, 1080 30 C1260 0, 1380 60, 1440 40"
@@ -93,7 +93,7 @@ export const WelcomeAnimation = ({ onComplete }: WelcomeAnimationProps) => {
           initial={{ y: '100%' }}
           animate={{ y: phase === 'sweep' ? '0%' : '0%' }}
           transition={{ duration: 1.25, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-0 bg-gradient-to-b from-[#0a3f38] via-[#0e9384] to-[#1abf9c]"
+          className="absolute inset-0 bg-gradient-to-b from-[#031d33] via-[#052e4f] to-[#0a5b85]"
         >
           <div className="absolute -top-32 inset-x-0 h-32">
             <svg
@@ -104,7 +104,7 @@ export const WelcomeAnimation = ({ onComplete }: WelcomeAnimationProps) => {
             >
               <path
                 d="M0 50 C280 110, 560 10, 840 70 C1120 120, 1320 20, 1440 50 L1440 140 L0 140 Z"
-                fill="#0a3f38"
+                fill="#052e4f"
               />
               <path
                 d="M0 50 C280 110, 560 10, 840 70 C1120 120, 1320 20, 1440 50"
@@ -119,7 +119,7 @@ export const WelcomeAnimation = ({ onComplete }: WelcomeAnimationProps) => {
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent" />
 
-          {[...Array(18)].map((_, i) => (
+          {[...Array(8)].map((_, i) => (
             <motion.div
               key={i}
               initial={{
@@ -138,7 +138,7 @@ export const WelcomeAnimation = ({ onComplete }: WelcomeAnimationProps) => {
                 ease: 'easeOut',
                 repeat: Infinity
               }}
-              className="absolute w-5 h-5 rounded-full bg-white/40 border border-white/80 shadow-[0_0_8px_rgba(255,255,255,0.8)] backdrop-blur-xs"
+              className="absolute w-5 h-5 rounded-full bg-white/40 border border-white/80"
             />
           ))}
         </div>
@@ -174,7 +174,7 @@ export const WelcomeAnimation = ({ onComplete }: WelcomeAnimationProps) => {
                 initial={{ width: '0%' }}
                 animate={{ width: phase === 'submerged' || phase === 'dive' ? '100%' : '0%' }}
                 transition={{ duration: 1.2, ease: 'easeInOut' }}
-                className="h-full bg-gradient-to-r from-[#fff3df] to-white rounded-full"
+                className="h-full bg-gradient-to-r from-[#a8dcf0] to-white rounded-full"
               />
             </div>
           </motion.div>
@@ -183,7 +183,7 @@ export const WelcomeAnimation = ({ onComplete }: WelcomeAnimationProps) => {
         <button
           type="button"
           onClick={onComplete}
-          className="absolute top-6 right-6 z-20 px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/25 text-xs text-white/90 font-medium transition-colors backdrop-blur-md cursor-pointer"
+          className="absolute top-6 right-6 z-20 px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/25 text-xs text-white/90 font-medium transition-colors cursor-pointer"
         >
           Lewati
         </button>

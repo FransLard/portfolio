@@ -24,6 +24,7 @@ export const AnimatedOceanSlideBackground: React.FC<AnimatedOceanSlideBackground
 
     let animId: number;
     let time = 0;
+    let isVisible = true;
 
     const handleResize = () => {
       if (!canvas) return;
@@ -34,7 +35,12 @@ export const AnimatedOceanSlideBackground: React.FC<AnimatedOceanSlideBackground
     handleResize();
     window.addEventListener('resize', handleResize);
 
+    const observer = new IntersectionObserver(([entry]) => { isVisible = entry.isIntersecting; });
+    observer.observe(canvas);
+
     const render = () => {
+      animId = requestAnimationFrame(render);
+      if (!isVisible) return;
       if (!ctx || !canvas) return;
       const width = canvas.width;
       const height = canvas.height;
@@ -51,14 +57,13 @@ export const AnimatedOceanSlideBackground: React.FC<AnimatedOceanSlideBackground
       renderCreaturesByDepth(ctx, depthLevel, width, height, time, waterMinY, waterMaxY);
 
       renderBubbles(ctx, width, waterMinY, waterMaxY, time);
-
-      animId = requestAnimationFrame(render);
     };
 
     animId = requestAnimationFrame(render);
 
     return () => {
       cancelAnimationFrame(animId);
+      observer.disconnect();
       window.removeEventListener('resize', handleResize);
     };
   }, [depthLevel]);

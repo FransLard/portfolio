@@ -11,11 +11,12 @@ export const JourneyOceanCanvas: React.FC = () => {
 
     let animId: number;
     let time = 0;
+    let isVisible = true;
 
     const bubbles: { x: number; y: number; radius: number; speed: number; wobbleSpeed: number; seed: number }[] = [];
     const initBubbles = (width: number, height: number) => {
       bubbles.length = 0;
-      const count = Math.floor(width / 60);
+      const count = Math.floor(width / 90);
       for (let i = 0; i < count; i++) {
         bubbles.push({
           x: Math.random() * width,
@@ -39,7 +40,12 @@ export const JourneyOceanCanvas: React.FC = () => {
     handleResize();
     window.addEventListener('resize', handleResize);
 
+    const observer = new IntersectionObserver(([entry]) => { isVisible = entry.isIntersecting; });
+    observer.observe(canvas);
+
     const render = () => {
+      animId = requestAnimationFrame(render);
+      if (!isVisible) return;
       if (!ctx || !canvas) return;
       const width = canvas.width;
       const height = canvas.height;
@@ -48,10 +54,10 @@ export const JourneyOceanCanvas: React.FC = () => {
       time += 0.016;
 
       const waterGrad = ctx.createLinearGradient(0, 0, 0, height);
-      waterGrad.addColorStop(0, '#3ed6a4');
-      waterGrad.addColorStop(0.35, '#0e9384');
-      waterGrad.addColorStop(0.80, '#0b6e63');
-      waterGrad.addColorStop(1.0, '#0a3f38');
+      waterGrad.addColorStop(0, '#35b6b2');
+      waterGrad.addColorStop(0.35, '#0e7aa0');
+      waterGrad.addColorStop(0.80, '#084a70');
+      waterGrad.addColorStop(1.0, '#052e4f');
       ctx.fillStyle = waterGrad;
       ctx.fillRect(0, 0, width, height);
 
@@ -69,7 +75,7 @@ export const JourneyOceanCanvas: React.FC = () => {
       ctx.lineTo(width + 50, -20);
       ctx.lineTo(width + 50, shorelineHeight);
 
-      for (let x = width + 50; x >= -50; x -= 8) {
+      for (let x = width + 50; x >= -50; x -= 14) {
         const sy =
           shorelineHeight +
           Math.sin(x * 0.005 + time * 1.2) * 12 +
@@ -82,7 +88,7 @@ export const JourneyOceanCanvas: React.FC = () => {
       ctx.fill();
 
       ctx.beginPath();
-      for (let x = -50; x <= width + 50; x += 8) {
+      for (let x = -50; x <= width + 50; x += 14) {
         const sy =
           shorelineHeight +
           Math.sin(x * 0.005 + time * 1.2) * 12 +
@@ -98,7 +104,7 @@ export const JourneyOceanCanvas: React.FC = () => {
       const drawWaveCrest = (yPos: number, freq: number, amp: number, speed: number, alpha: number, color: string) => {
         ctx.save();
         ctx.beginPath();
-        for (let x = 0; x <= width; x += 10) {
+        for (let x = 0; x <= width; x += 16) {
           const wy = yPos + Math.sin(x * freq + time * speed) * amp + Math.cos(x * (freq * 0.7) - time * (speed * 0.5)) * (amp * 0.5);
           if (x === 0) ctx.moveTo(x, wy);
           else ctx.lineTo(x, wy);
@@ -159,7 +165,7 @@ export const JourneyOceanCanvas: React.FC = () => {
 
       const fish2X = width - (((time * 38) % (width + 160)) - 80);
       const fish2Y = height * 0.68 + Math.cos(time * 1.8) * 18;
-      drawFish(fish2X, fish2Y, 16, '#3ed6a4', true);
+      drawFish(fish2X, fish2Y, 16, '#38bdf8', true);
 
       ctx.save();
       ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
@@ -181,14 +187,13 @@ export const JourneyOceanCanvas: React.FC = () => {
         ctx.stroke();
       }
       ctx.restore();
-
-      animId = requestAnimationFrame(render);
     };
 
     animId = requestAnimationFrame(render);
 
     return () => {
       cancelAnimationFrame(animId);
+      observer.disconnect();
       window.removeEventListener('resize', handleResize);
     };
   }, []);

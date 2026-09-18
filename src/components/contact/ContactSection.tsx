@@ -74,7 +74,7 @@ export const ContactSection: React.FC = () => {
   return (
     <section
       id="contact"
-      className="relative z-20 -mt-1 w-full bg-[#0a3f38] select-none py-24 overflow-hidden text-[#0f172a]"
+      className="relative z-20 -mt-1 w-full bg-[#052e4f] select-none py-24 overflow-hidden text-[#0f172a]"
     >
       <ContactOceanCanvas />
 

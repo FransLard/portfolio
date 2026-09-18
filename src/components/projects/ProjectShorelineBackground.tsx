@@ -24,7 +24,7 @@ export const ProjectShorelineBackground: React.FC = () => {
 
           <path
             d="M0,0 L1440,0 L1440,140 Q1100,215 760,150 T0,180 Z"
-            fill="#3ed6a4"
+            fill="#35b6b2"
             opacity="0.35"
           />
 
@@ -38,7 +38,7 @@ export const ProjectShorelineBackground: React.FC = () => {
         </svg>
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a3f38] via-[#0e9384] to-[#0a3f38]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#052e4f] via-[#0a5b85] to-[#052e4f]" />
 
       <div className="absolute inset-0 pointer-events-none opacity-40">
         <svg
@@ -71,8 +71,8 @@ export const ProjectShorelineBackground: React.FC = () => {
         </svg>
       </div>
 
-      <div className="absolute top-1/4 left-1/3 w-[550px] h-[550px] rounded-full bg-[#3ed6a4]/15 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[600px] h-[600px] rounded-full bg-[#1abf9c]/15 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/3 w-[550px] h-[550px] rounded-full bg-[radial-gradient(circle,#35b6b2_0%,transparent_65%)] opacity-15 pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,#1288b0_0%,transparent_65%)] opacity-15 pointer-events-none" />
     </div>
   );
 };

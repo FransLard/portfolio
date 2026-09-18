@@ -23,7 +23,7 @@ const SlideProgressBar: React.FC<{
   );
   return (
     <motion.div
-      className="h-full bg-[#0e9384]"
+      className="h-full bg-[#1288b0]"
       style={{ scaleX, transformOrigin: 'left' }}
     />
   );
@@ -95,7 +95,7 @@ export const ProjectShowcase: React.FC<ProjectShowcaseProps> = ({ onOpenProject 
 
         <motion.div
           style={{ y: yDock, zIndex: 40 + flagshipProjects.length * 10 }}
-          className="absolute inset-0 w-full h-full bg-[#0a3f38] shadow-[0_-8px_24px_rgba(15,23,42,0.35)]"
+          className="absolute inset-0 w-full h-full bg-[#052e4f] shadow-[0_-8px_24px_rgba(15,23,42,0.35)]"
         >
           <FilteredProjectDock
             projects={projectsData}

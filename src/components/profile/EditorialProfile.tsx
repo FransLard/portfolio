@@ -21,19 +21,13 @@ const containerVariants: Variants = {
 const perspectiveCardVariants: Variants = {
   hidden: {
     opacity: 0,
-    rotateX: 18,
-    rotateY: -6,
-    scale: 0.91,
     y: 45,
-    filter: 'blur(5px)'
+    scale: 0.97
   },
   visible: {
     opacity: 1,
-    rotateX: 0,
-    rotateY: 0,
-    scale: 1,
     y: 0,
-    filter: 'blur(0px)',
+    scale: 1,
     transition: {
       type: 'spring' as const,
       stiffness: 170,
@@ -46,15 +40,11 @@ const perspectiveCardVariants: Variants = {
 const headerRevealVariants: Variants = {
   hidden: {
     opacity: 0,
-    y: 35,
-    rotateX: 12,
-    filter: 'blur(4px)'
+    y: 35
   },
   visible: {
     opacity: 1,
     y: 0,
-    rotateX: 0,
-    filter: 'blur(0px)',
     transition: {
       type: 'spring' as const,
       stiffness: 160,

@@ -212,7 +212,7 @@ export function drawScubaDiver(
 
   const kick = Math.sin(time * 5) * 6;
 
-  ctx.fillStyle = '#0e9384';
+  ctx.fillStyle = '#0a5b85';
   ctx.strokeStyle = '#0f172a';
   ctx.lineWidth = 2.2;
 
@@ -227,7 +227,7 @@ export function drawScubaDiver(
   ctx.fill();
   ctx.stroke();
 
-  ctx.fillStyle = '#3ed6a4';
+  ctx.fillStyle = '#35b6b2';
   ctx.beginPath();
   ctx.arc(18, -2, 6, 0, Math.PI * 2);
   ctx.fill();

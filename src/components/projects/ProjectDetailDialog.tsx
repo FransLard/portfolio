@@ -37,7 +37,7 @@ export const ProjectDetailDialog: React.FC<ProjectDetailDialogProps> = ({ projec
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-[#08111e]/85 backdrop-blur-md cursor-pointer"
+          className="fixed inset-0 bg-[#08111e]/90 cursor-pointer"
         />
 
         <motion.div

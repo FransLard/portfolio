@@ -286,7 +286,7 @@ export const SwimmingDuck: React.FC<SwimmingDuckProps> = ({
           viewBox="0 0 68 58"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="drop-shadow-2xl filter"
+          className="drop-shadow-md"
         >
           <path
             d="M10 34C10 44 24 48 38 48C52 48 60 42 60 34C60 28 54 24 46 24C44 18 36 12 26 12C16 12 10 20 10 34Z"
@@ -417,9 +417,9 @@ export const SwimmingDuck: React.FC<SwimmingDuckProps> = ({
             initial={{ opacity: 0, scale: 0.75, y: 6 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.75, y: 6 }}
-            className="absolute -top-10 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-2xl bg-white/95 text-[#0a3f38] text-xs font-bold shadow-xl border border-[#3ed6a4] whitespace-nowrap flex items-center gap-1.5 backdrop-blur-md"
+            className="absolute -top-10 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-2xl bg-white text-[#0a3f38] text-xs font-bold border border-[#3ed6a4] whitespace-nowrap flex items-center gap-1.5"
           >
-            <span className="drop-shadow-xs">{currentQuip}</span>
+            <span>{currentQuip}</span>
           </motion.div>
         )}
       </motion.div>

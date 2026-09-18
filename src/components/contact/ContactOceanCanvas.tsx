@@ -33,11 +33,12 @@ export const ContactOceanCanvas: React.FC = () => {
 
     let animId: number;
     let time = 0;
+    let isVisible = true;
 
     const bubbles: { x: number; y: number; radius: number; speed: number; wobbleSpeed: number; seed: number }[] = [];
     const initBubbles = (width: number, height: number) => {
       bubbles.length = 0;
-      const count = Math.floor(width / 45);
+      const count = Math.floor(width / 70);
       for (let i = 0; i < count; i++) {
         bubbles.push({
           x: Math.random() * width,
@@ -106,7 +107,12 @@ export const ContactOceanCanvas: React.FC = () => {
       parent.addEventListener('click', handleClick);
     }
 
+    const observer = new IntersectionObserver(([entry]) => { isVisible = entry.isIntersecting; });
+    observer.observe(canvas);
+
     const render = () => {
+      animId = requestAnimationFrame(render);
+      if (!isVisible) return;
       if (!ctx || !canvas) return;
       const width = canvas.width;
       const height = canvas.height;
@@ -115,7 +121,7 @@ export const ContactOceanCanvas: React.FC = () => {
       time += 0.016;
 
       const waterGrad = ctx.createLinearGradient(0, 0, 0, height);
-      waterGrad.addColorStop(0, '#0a3f38');
+      waterGrad.addColorStop(0, '#052e4f');
       waterGrad.addColorStop(0.35, '#024968');
       waterGrad.addColorStop(0.85, '#013852');
       waterGrad.addColorStop(1.0, '#01283c');
@@ -125,7 +131,7 @@ export const ContactOceanCanvas: React.FC = () => {
       const drawWaveCrest = (yPos: number, freq: number, amp: number, speed: number, alpha: number, color: string) => {
         ctx.save();
         ctx.beginPath();
-        for (let x = 0; x <= width; x += 10) {
+        for (let x = 0; x <= width; x += 16) {
           const wy = yPos + Math.sin(x * freq + time * speed) * amp + Math.cos(x * (freq * 0.7) - time * (speed * 0.5)) * (amp * 0.5);
           if (x === 0) ctx.moveTo(x, wy);
           else ctx.lineTo(x, wy);
@@ -182,7 +188,7 @@ export const ContactOceanCanvas: React.FC = () => {
 
       const fishX = ((time * 40) % (width + 160)) - 80;
       const fishY = height * 0.35 + Math.sin(time * 1.5) * 12;
-      drawFish(fishX, fishY, 13, '#3ed6a4', false);
+      drawFish(fishX, fishY, 13, '#38bdf8', false);
 
       ctx.save();
       ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
@@ -268,7 +274,7 @@ export const ContactOceanCanvas: React.FC = () => {
       ctx.moveTo(-50, height + 20);
       ctx.lineTo(-50, seabedY);
 
-      for (let x = -50; x <= width + 50; x += 10) {
+      for (let x = -50; x <= width + 50; x += 16) {
         const sy =
           seabedY +
           Math.sin(x * 0.006 + time * 0.8) * 8 +
@@ -280,14 +286,13 @@ export const ContactOceanCanvas: React.FC = () => {
       ctx.closePath();
       ctx.fill();
       ctx.restore();
-
-      animId = requestAnimationFrame(render);
     };
 
     animId = requestAnimationFrame(render);
 
     return () => {
       cancelAnimationFrame(animId);
+      observer.disconnect();
       window.removeEventListener('resize', handleResize);
       if (parent) {
         parent.removeEventListener('click', handleClick);

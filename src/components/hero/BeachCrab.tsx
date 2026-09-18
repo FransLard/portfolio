@@ -262,7 +262,7 @@ export const BeachCrab = forwardRef<BeachCrabHandle>((_props, ref) => {
             initial={{ opacity: 0, scale: 0.75, y: 6 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.75, y: 6 }}
-            className="absolute -top-9 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-white/95 text-[#c2410c] text-[11px] font-bold shadow-lg border border-[#f97316] whitespace-nowrap backdrop-blur-xs flex items-center gap-1"
+            className="absolute -top-9 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-white text-[#c2410c] text-[11px] font-bold border border-[#f97316] whitespace-nowrap flex items-center gap-1"
           >
             <span>{currentQuip}</span>
           </motion.div>

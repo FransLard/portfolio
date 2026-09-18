@@ -19,7 +19,7 @@ export function App() {
   useLenisSmoothScroll();
 
   return (
-    <div className="min-h-screen bg-[#fff3df] text-[#0f172a] selection:bg-[#0e9384] selection:text-white">
+    <div className="min-h-screen bg-[#fff3df] text-[#0f172a] selection:bg-[#0a5b85] selection:text-white">
       {showWelcome && (
         <WelcomeAnimation onComplete={() => setShowWelcome(false)} />
       )}

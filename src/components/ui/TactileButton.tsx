@@ -16,9 +16,9 @@ export const TactileButton: React.FC<TactileButtonProps> = ({
   ...props
 }) => {
   const baseStyles = 'inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl font-medium text-xs sm:text-sm transition-colors select-none cursor-pointer';
-  
+
   const variantStyles = {
-    primary: 'bg-[#0e9384] hover:bg-[#0b6e63] text-white border border-[#3ed6a4] shadow-md shadow-[#0e9384]/25',
+    primary: 'bg-[#1288b0] hover:bg-[#0a5b85] text-white border border-[#7fd4ef] shadow-md shadow-[#0a5b85]/30',
     secondary: 'bg-[#0a3f38] hover:bg-[#0e4f45] text-[#f8fafc] border border-[#1e7d6f] hover:border-[#f3d9ae]/70',
     sand: 'bg-[#f3d9ae] hover:bg-[#f7e3bd] text-[#0b2420] border border-[#d9b382] font-semibold',
     ghost: 'bg-transparent hover:bg-[#0a3f38] text-[#cbd5e1] hover:text-[#f8fafc] border border-transparent hover:border-[#1e7d6f]'

@@ -9,26 +9,26 @@ export function renderWaterBody(
   height: number,
   depthLevel: 1 | 2 | 3 | 4
 ): void {
-  let waterTop = '#3ed6a4';
-  let waterMid = '#0e9384';
-  let waterBottom = '#0a3f38';
+  let waterTop = '#4cc3c9';
+  let waterMid = '#1288b0';
+  let waterBottom = '#0a5b85';
 
   if (depthLevel === 1) {
-    waterTop = '#3ed6a4';
-    waterMid = '#0e9384';
-    waterBottom = '#0b6e63';
+    waterTop = '#4cc3c9';
+    waterMid = '#1288b0';
+    waterBottom = '#0a5b85';
   } else if (depthLevel === 2) {
-    waterTop = '#3ed6a4';
-    waterMid = '#0e9384';
-    waterBottom = '#0a3f38';
+    waterTop = '#35b6b2';
+    waterMid = '#0e7aa0';
+    waterBottom = '#084a70';
   } else if (depthLevel === 3) {
-    waterTop = '#0e9384';
-    waterMid = '#0a3f38';
-    waterBottom = '#01283a';
+    waterTop = '#0e7aa0';
+    waterMid = '#084a70';
+    waterBottom = '#052e4f';
   } else {
-    waterTop = '#0a3f38';
-    waterMid = '#024968';
-    waterBottom = '#023850';
+    waterTop = '#084a70';
+    waterMid = '#052e4f';
+    waterBottom = '#031d33';
   }
 
   const waterGrad = ctx.createLinearGradient(0, 0, 0, height);

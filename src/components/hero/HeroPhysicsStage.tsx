@@ -308,29 +308,26 @@ export const HeroPhysicsStage = forwardRef<HeroPhysicsStageHandle, HeroPhysicsSt
             }}
             className="relative"
           >
-            <div className="absolute -bottom-4 left-1 right-1 h-4 bg-[#d9b382]/50 rounded-full blur-[4px] transform scale-y-50" />
-            <div className="absolute -bottom-3 left-2 right-2 h-3 bg-[#0e9384]/50 rounded-full blur-[3px]" />
-
             <span
-              className="absolute top-1 sm:top-2 left-0.5 text-[40px] min-[390px]:text-[48px] sm:text-7xl md:text-8xl font-black text-[#06231f] tracking-tight select-none pointer-events-none"
+              className="absolute top-1 sm:top-2 left-0.5 text-[40px] min-[390px]:text-[48px] sm:text-7xl md:text-8xl font-black text-[#041c33] tracking-tight select-none pointer-events-none"
               aria-hidden="true"
             >
               {letter.char}
             </span>
             <span
-              className="absolute top-0.5 sm:top-1.5 left-0.5 text-[40px] min-[390px]:text-[48px] sm:text-7xl md:text-8xl font-black text-[#0b6e63] tracking-tight select-none pointer-events-none"
+              className="absolute top-0.5 sm:top-1.5 left-0.5 text-[40px] min-[390px]:text-[48px] sm:text-7xl md:text-8xl font-black text-[#0a5b85] tracking-tight select-none pointer-events-none"
               aria-hidden="true"
             >
               {letter.char}
             </span>
             <span
-              className="absolute top-0.5 left-0 text-[40px] min-[390px]:text-[48px] sm:text-7xl md:text-8xl font-black text-[#0e9384] tracking-tight select-none pointer-events-none"
+              className="absolute top-0.5 left-0 text-[40px] min-[390px]:text-[48px] sm:text-7xl md:text-8xl font-black text-[#1288b0] tracking-tight select-none pointer-events-none"
               aria-hidden="true"
             >
               {letter.char}
             </span>
 
-            <span className="relative z-10 block text-[40px] min-[390px]:text-[48px] sm:text-7xl md:text-8xl font-black text-white tracking-tight drop-shadow-[0_6px_16px_rgba(14,147,132,0.38)]">
+            <span className="relative z-10 block text-[40px] min-[390px]:text-[48px] sm:text-7xl md:text-8xl font-black text-white tracking-tight">
               {letter.char}
             </span>
           </motion.div>

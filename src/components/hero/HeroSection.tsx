@@ -12,6 +12,7 @@ import type { BeachCrabHandle } from './BeachCrab';
 import { BeachHumans } from './BeachHumans';
 import { BeachDecorations } from './BeachDecorations';
 import { TactileButton } from '../ui/TactileButton';
+import { scrollToSectionLenis } from '../../hooks/useLenisSmoothScroll';
 import { profileData } from '../../data/portfolioData';
 
 export const HeroSection: React.FC = () => {
@@ -83,10 +84,7 @@ export const HeroSection: React.FC = () => {
   };
 
   const handleScrollToProjects = () => {
-    const el = document.getElementById('projects');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+    scrollToSectionLenis('projects');
   };
 
   return (
@@ -137,7 +135,7 @@ export const HeroSection: React.FC = () => {
               href={profileData.contact.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-[#0a3f38] hover:bg-[#0e4f45] text-[#f8fafc] border border-[#1e7d6f] hover:border-[#f3d9ae]/70 font-medium text-xs sm:text-sm transition-all select-none cursor-pointer hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-[#052e4f] hover:bg-[#0a5b85] text-[#f8fafc] border border-[#2e9cc4] hover:border-[#f3d9ae]/70 font-medium text-xs sm:text-sm transition-all select-none cursor-pointer hover:-translate-y-0.5"
             >
               <span>GitHub</span>
               <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#f3d9ae]" />

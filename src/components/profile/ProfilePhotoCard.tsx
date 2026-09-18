@@ -123,7 +123,7 @@ export const ProfilePhotoCard: React.FC<ProfilePhotoCardProps> = ({ isFlooded })
 
             <div className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
 
-            <div className="absolute bottom-4 left-4 right-4 p-3 rounded-xl bg-[#fffffb]/90 border border-[#ecd7b0] backdrop-blur-md shadow-sm">
+            <div className="absolute bottom-4 left-4 right-4 p-3 rounded-xl bg-[#fffffb] border border-[#ecd7b0] shadow-sm">
               <div className="flex items-center gap-3">
                 <div>
                   <div className="text-sm font-bold text-[#0f172a]">
@@ -152,7 +152,7 @@ export const ProfilePhotoCard: React.FC<ProfilePhotoCardProps> = ({ isFlooded })
               className="h-3 w-3 rounded-full border border-[#0f172a]/30 shadow-sm"
               style={{ background: 'conic-gradient(#f87171, #ffc53d, #4ade80, #38bdf8, #f87171)' }}
             />
-            <span>ID
+            <span>ID</span>
           </div>
         </div>
       </motion.div>
