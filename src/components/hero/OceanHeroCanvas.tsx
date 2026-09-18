@@ -133,8 +133,8 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
         const rect = canvas.getBoundingClientRect();
         sizeRef.w = rect.width;
         sizeRef.h = rect.height;
-        canvas.width = Math.floor(rect.width * dpr);
-        canvas.height = Math.floor(rect.height * dpr);
+        canvas.width = Math.ceil(rect.width * dpr);
+        canvas.height = Math.ceil(rect.height * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       };
 
@@ -186,7 +186,8 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
         oceanGrad.addColorStop(0.70, '#1288b0');
         oceanGrad.addColorStop(1, '#35b6b2');
         ctx.fillStyle = oceanGrad;
-        ctx.fillRect(0, 0, width, height);
+        // Overdraw 4px di tiap sisi agar tidak ada garis tepi / gap sub-pixel di mobile
+        ctx.fillRect(-4, -4, width + 8, height + 8);
 
         ctx.save();
         ctx.globalAlpha = 0.07;
@@ -203,9 +204,9 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
         const wave1Y = height * 0.26;
         ctx.save();
         ctx.beginPath();
-        for (let x = 0; x <= width; x += 8) {
+        for (let x = -8; x <= width + 8; x += 8) {
           const cy = wave1Y + Math.sin(x * 0.005 + t * 0.45) * 12 + Math.cos(x * 0.009 - t * 0.3) * 5;
-          if (x === 0) ctx.moveTo(x, cy);
+          if (x <= -8) ctx.moveTo(x, cy);
           else ctx.lineTo(x, cy);
         }
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
@@ -216,9 +217,9 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
         const wave2Y = height * 0.45;
         ctx.save();
         ctx.beginPath();
-        for (let x = 0; x <= width; x += 8) {
+        for (let x = -8; x <= width + 8; x += 8) {
           const cy = wave2Y + Math.sin(x * 0.006 + t * 0.55 + 1.5) * 14 + Math.sin(x * 0.012 - t * 0.25) * 6;
-          if (x === 0) ctx.moveTo(x, cy);
+          if (x <= -8) ctx.moveTo(x, cy);
           else ctx.lineTo(x, cy);
         }
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
@@ -228,12 +229,12 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
 
         ctx.save();
         ctx.beginPath();
-        ctx.moveTo(0, height);
-        ctx.lineTo(0, getTideY(0));
-        for (let x = 0; x <= width; x += 8) {
+        ctx.moveTo(-4, height + 4);
+        ctx.lineTo(-4, getTideY(0));
+        for (let x = 0; x <= width + 4; x += 8) {
           ctx.lineTo(x, getTideY(x));
         }
-        ctx.lineTo(width, height);
+        ctx.lineTo(width + 4, height + 4);
         ctx.closePath();
         ctx.fillStyle = '#f4e3bb';
         ctx.fill();
@@ -241,9 +242,9 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
 
         ctx.save();
         ctx.beginPath();
-        for (let x = 0; x <= width; x += 8) {
+        for (let x = -8; x <= width + 8; x += 8) {
           const cy = getTideY(x);
-          if (x === 0) ctx.moveTo(x, cy + 2);
+          if (x <= -8) ctx.moveTo(x, cy + 2);
           else ctx.lineTo(x, cy + 2);
         }
         ctx.strokeStyle = '#d9bd8a';
@@ -251,9 +252,9 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
         ctx.stroke();
 
         ctx.beginPath();
-        for (let x = 0; x <= width; x += 8) {
+        for (let x = -8; x <= width + 8; x += 8) {
           const cy = getTideY(x);
-          if (x === 0) ctx.moveTo(x, cy);
+          if (x <= -8) ctx.moveTo(x, cy);
           else ctx.lineTo(x, cy);
         }
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.98)';
@@ -262,7 +263,7 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
         ctx.lineJoin = 'round';
         ctx.stroke();
 
-        for (let x = 6; x < width; x += 16) {
+        for (let x = 0; x < width + 8; x += 16) {
           const cy = getTideY(x);
           const bubbleSpread = (Math.sin(x * 0.06 + t * 0.8) + 1) * 3 + 1;
           ctx.beginPath();

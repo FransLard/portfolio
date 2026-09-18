@@ -128,7 +128,7 @@ export const BeachCrab = forwardRef<BeachCrabHandle>((_props, ref) => {
         position: 'absolute',
         pointerEvents: 'none'
       }}
-      className="z-20 select-none bottom-28 sm:bottom-36 md:bottom-[185px] scale-[0.75] sm:scale-[0.85] md:scale-100 origin-bottom"
+      className="z-20 select-none left-0 bottom-28 sm:bottom-36 md:bottom-[185px] scale-[0.75] sm:scale-[0.85] md:scale-100 origin-bottom"
     >
       <motion.div
         animate={{

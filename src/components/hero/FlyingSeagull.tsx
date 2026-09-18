@@ -121,7 +121,7 @@ export const FlyingSeagull: React.FC = () => {
         position: 'absolute',
         pointerEvents: 'none'
       }}
-      className="z-20 select-none"
+      className="z-20 select-none left-0"
     >
       <div className={`relative ${direction === 'rtl' ? '-scale-x-100' : 'scale-x-100'}`}>
         <motion.div
