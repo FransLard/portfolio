@@ -56,6 +56,18 @@ export const HeroPhysicsStage = forwardRef<HeroPhysicsStageHandle, HeroPhysicsSt
     const lastRippleTimeRef = useRef<number>(0);
     const returnTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+    // Timer balik-kandang yang anti-starvation: kalau sudah ada timer yang
+    // terjadwal, jangan di-clear + dijadwal ulang terus (itu yang bikin di
+    // mobile huruf nempel terus saat bebek lewat lama). Biarkan timer yang
+    // sudah jalan yang me-reset, sama seperti perilaku di PC.
+    const scheduleLettersReturn = useCallback((delay: number = 1200) => {
+      if (returnTimeoutRef.current) return;
+      returnTimeoutRef.current = setTimeout(() => {
+        returnTimeoutRef.current = null;
+        setLetters((prev) => prev.map((l) => ({ ...l, posX: 0, posY: 0, wobble: 0 })));
+      }, delay);
+    }, []);
+
     const updateDuckExpression = useCallback((expr: DuckExpression) => {
       setDuckExpression(expr);
       if (onDuckExpressionChange) {
@@ -65,63 +77,71 @@ export const HeroPhysicsStage = forwardRef<HeroPhysicsStageHandle, HeroPhysicsSt
 
     const resolveCollisions = useCallback(
       (sourceId: string, centerX: number, centerY: number, intensity: number = 1): boolean => {
-        let didHitAny = false;
         const isMobile = typeof window !== 'undefined' ? window.innerWidth < 640 : false;
         const minThreshold = isMobile ? 65 : 130;
         const maxDisplacement = isMobile ? 18 : 50;
 
-        setLetters((prev) => {
-          return prev.map((other) => {
-            if (other.id === sourceId) return other;
+        // Hitung tabrakan secara sinkron (baca DOM dulu) agar hasilnya bisa
+        // dipakai langsung — jangan mengandalkan side-effect di dalam updater
+        // setLetters yang sifatnya async/batched.
+        const hits: { id: string; pushX: number; pushY: number; wobble: number; cx: number; cy: number }[] = [];
+        for (const other of INITIAL_LETTERS) {
+          if (other.id === sourceId) continue;
+          const otherEl = document.getElementById(`letter-${other.id}`);
+          if (!otherEl) continue;
+          const otherRect = otherEl.getBoundingClientRect();
+          const otherCenterX = otherRect.left + otherRect.width / 2;
+          const otherCenterY = otherRect.top + otherRect.height / 2;
 
-            const otherEl = document.getElementById(`letter-${other.id}`);
-            if (!otherEl) return other;
+          let dx = otherCenterX - centerX;
+          let dy = otherCenterY - centerY;
+          let dist = Math.sqrt(dx ** 2 + dy ** 2);
 
-            const otherRect = otherEl.getBoundingClientRect();
-            const otherCenterX = otherRect.left + otherRect.width / 2;
-            const otherCenterY = otherRect.top + otherRect.height / 2;
+          if (dist < 1) {
+            dx = (Math.random() - 0.5) * 50 || 30;
+            dy = (Math.random() - 0.5) * 50 || 30;
+            dist = Math.sqrt(dx ** 2 + dy ** 2);
+          }
 
-            let dx = otherCenterX - centerX;
-            let dy = otherCenterY - centerY;
-            let dist = Math.sqrt(dx ** 2 + dy ** 2);
+          if (dist < minThreshold) {
+            const overlap = (minThreshold - dist) / minThreshold;
+            const force = overlap * (isMobile ? 35 : 70) * Math.max(0.8, intensity);
+            hits.push({
+              id: other.id,
+              pushX: (dx / dist) * force,
+              pushY: (dy / dist) * (force * 0.85),
+              wobble: (dx > 0 ? 10 : -10) * overlap * Math.max(0.8, intensity),
+              cx: otherCenterX,
+              cy: otherCenterY
+            });
+          }
+        }
 
-            if (dist < 1) {
-              dx = (Math.random() - 0.5) * 50 || 30;
-              dy = (Math.random() - 0.5) * 50 || 30;
-              dist = Math.sqrt(dx ** 2 + dy ** 2);
-            }
+        if (hits.length === 0) return false;
 
-            if (dist < minThreshold) {
-              didHitAny = true;
-              const overlap = (minThreshold - dist) / minThreshold;
-              const force = overlap * (isMobile ? 35 : 70) * Math.max(0.8, intensity);
+        for (const h of hits) {
+          onRipple(h.cx, h.cy, 55);
+        }
 
-              const pushX = (dx / dist) * force;
-              const pushY = (dy / dist) * (force * 0.85);
-              const wobbleAngle = (dx > 0 ? 10 : -10) * overlap * Math.max(0.8, intensity);
+        const hitIds = new Set(hits.map((h) => h.id));
+        const hitById = new Map(hits.map((h) => [h.id, h]));
+        setLetters((prev) =>
+          prev.map((other) => {
+            const h = hitById.get(other.id);
+            if (!h || !hitIds.has(other.id)) return other;
+            return {
+              ...other,
+              posX: Math.max(-maxDisplacement, Math.min(maxDisplacement, other.posX + h.pushX)),
+              posY: Math.max(-maxDisplacement, Math.min(maxDisplacement, other.posY + h.pushY)),
+              wobble: h.wobble
+            };
+          })
+        );
 
-              onRipple(otherCenterX, otherCenterY, 55);
-
-              return {
-                ...other,
-                posX: Math.max(-maxDisplacement, Math.min(maxDisplacement, other.posX + pushX)),
-                posY: Math.max(-maxDisplacement, Math.min(maxDisplacement, other.posY + pushY)),
-                wobble: wobbleAngle
-              };
-            }
-
-            return other;
-          });
-        });
-
-        if (returnTimeoutRef.current) clearTimeout(returnTimeoutRef.current);
-        returnTimeoutRef.current = setTimeout(() => {
-          setLetters((prev) => prev.map((l) => ({ ...l, posX: 0, posY: 0, wobble: 0 })));
-        }, 1200);
-
-        return didHitAny;
+        scheduleLettersReturn(1200);
+        return true;
       },
-      [onRipple]
+      [onRipple, scheduleLettersReturn]
     );
 
     const handleLetterDragStart = (id: string) => {
@@ -189,66 +209,76 @@ export const HeroPhysicsStage = forwardRef<HeroPhysicsStageHandle, HeroPhysicsSt
     const handleDuckSwim = (duckX: number, duckY: number) => {
 
       const now = performance.now();
-      if (now - lastRippleTimeRef.current > 380) {
+      // Spawn lebih rapat (150ms) agar selalu ada cincin muda tepat di bawah
+      // bebek — lingkaran statis + bebek jalan 40px/s memang bikin cincin tua
+      // terlihat ketinggalan, itu wake yang wajar. Cincin muda yang rapat
+      // bikin gelombang terlihat nempel di badan bebek.
+      if (now - lastRippleTimeRef.current > 150) {
         lastRippleTimeRef.current = now;
-        onRipple(duckX, duckY, 45);
+        onRipple(duckX, duckY, 50);
       }
 
-      let didHitLetter = false;
+      // Deteksi tabrakan secara sinkron agar flag hit valid di mobile maupun PC.
+      const isMobile = typeof window !== 'undefined' ? window.innerWidth < 640 : false;
+      const hitThreshold = isMobile ? 55 : 105;
+      const maxDisplacement = isMobile ? 18 : 45;
+      const hitIds = new Set<string>();
 
-      setLetters((prev) => {
-        let moved = false;
-        const updated = prev.map((letter) => {
+      for (const letter of INITIAL_LETTERS) {
+        const el = document.getElementById(`letter-${letter.id}`);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        const letterCenterX = rect.left + rect.width / 2;
+        const letterCenterY = rect.top + rect.height / 2;
+        const dx = letterCenterX - duckX;
+        const dy = letterCenterY - duckY;
+        const dist = Math.sqrt(dx ** 2 + dy ** 2);
+        if (dist < hitThreshold && dist > 0) {
+          hitIds.add(letter.id);
+          onRipple(letterCenterX, letterCenterY, 55);
+        }
+      }
+
+      if (hitIds.size === 0) return;
+
+      setLetters((prev) =>
+        prev.map((letter) => {
+          if (!hitIds.has(letter.id)) return letter;
           const el = document.getElementById(`letter-${letter.id}`);
-          if (!el) return letter;
-
-          const rect = el.getBoundingClientRect();
-          const letterCenterX = rect.left + rect.width / 2;
-          const letterCenterY = rect.top + rect.height / 2;
-
-          const dx = letterCenterX - duckX;
-          const dy = letterCenterY - duckY;
-          const dist = Math.sqrt(dx ** 2 + dy ** 2);
-
-          const isMobile = typeof window !== 'undefined' ? window.innerWidth < 640 : false;
-          const hitThreshold = isMobile ? 55 : 105;
-          const maxDisplacement = isMobile ? 18 : 45;
-
-          if (dist < hitThreshold && dist > 0) {
-            moved = true;
-            didHitLetter = true;
-            const pushY = dy >= 0 ? (isMobile ? 10 : 22) : (isMobile ? -10 : -22);
-            const pushX = dx >= 0 ? (isMobile ? 8 : 14) : (isMobile ? -4 : -6);
-            const wobble = dy >= 0 ? 8 : -8;
-
-            onRipple(letterCenterX, letterCenterY, 55);
-
-            return {
-              ...letter,
-              posX: Math.max(-maxDisplacement, Math.min(maxDisplacement, letter.posX + pushX)),
-              posY: Math.max(-maxDisplacement, Math.min(maxDisplacement, letter.posY + pushY)),
-              wobble
-            };
+          let pushY: number;
+          let pushX: number;
+          let wobble: number;
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            const dy = rect.left + rect.width / 2 - duckX >= 0 ? 1 : -1;
+            // Arah vertikal mengikuti posisi relatif huruf vs bebek
+            const vert = rect.top + rect.height / 2 - duckY;
+            pushY = vert >= 0 ? (isMobile ? 10 : 22) : (isMobile ? -10 : -22);
+            pushX = dy >= 0 ? (isMobile ? 8 : 14) : (isMobile ? -4 : -6);
+            wobble = vert >= 0 ? 8 : -8;
+          } else {
+            pushY = isMobile ? 10 : 22;
+            pushX = isMobile ? 8 : 14;
+            wobble = 8;
           }
+          return {
+            ...letter,
+            posX: Math.max(-maxDisplacement, Math.min(maxDisplacement, letter.posX + pushX)),
+            posY: Math.max(-maxDisplacement, Math.min(maxDisplacement, letter.posY + pushY)),
+            wobble
+          };
+        })
+      );
 
-          return letter;
-        });
+      updateDuckExpression('impact');
+      if (duckImpactTimeoutRef.current) clearTimeout(duckImpactTimeoutRef.current);
+      duckImpactTimeoutRef.current = setTimeout(() => {
+        updateDuckExpression('normal');
+      }, 900);
 
-        return moved ? updated : prev;
-      });
-
-      if (didHitLetter) {
-        updateDuckExpression('impact');
-        if (duckImpactTimeoutRef.current) clearTimeout(duckImpactTimeoutRef.current);
-        duckImpactTimeoutRef.current = setTimeout(() => {
-          updateDuckExpression('normal');
-        }, 900);
-
-        if (returnTimeoutRef.current) clearTimeout(returnTimeoutRef.current);
-        returnTimeoutRef.current = setTimeout(() => {
-          setLetters((prev) => prev.map((l) => ({ ...l, posX: 0, posY: 0, wobble: 0 })));
-        }, 1200);
-      }
+      // Sama seperti PC: jadwalkan balik, tapi jangan perpanjang terus saat
+      // bebek masih nempel (anti-starvation khusus mobile).
+      scheduleLettersReturn(1200);
     };
 
     useImperativeHandle(ref, () => ({

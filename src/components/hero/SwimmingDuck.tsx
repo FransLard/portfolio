@@ -135,7 +135,14 @@ export const SwimmingDuck: React.FC<SwimmingDuckProps> = ({
         lastCollisionCheck = currentTime;
         const rect = duckRef.current.getBoundingClientRect();
         if (rect.right > 0 && rect.left < window.innerWidth) {
-          onDuckSwim(rect.left + rect.width / 2, rect.top + rect.height * 0.75);
+          // Titik gelombang tepat di garis air bawah badan bebek (bukan di
+          // tengah kotak padding), + sedikit lead ke arah gerak (+x) agar
+          // lingkaran tidak terlihat ketinggalan di belakang bebek.
+          const leadX = 9;
+          onDuckSwim(
+            rect.left + rect.width / 2 + leadX,
+            rect.bottom - 14
+          );
         }
       }
 
