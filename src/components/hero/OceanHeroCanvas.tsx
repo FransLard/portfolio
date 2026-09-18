@@ -54,7 +54,9 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
       const x = clientX - rect.left;
       const y = clientY - rect.top;
 
-      if (y > rect.height * 0.70) return;
+      // Batasi interaksi hanya di area air (jauh di atas garis pantai 0.68)
+      // agar ripple tidak spawn di pasir
+      if (y > rect.height * 0.60) return;
 
       ripplesRef.current.push({
         x,
@@ -98,7 +100,8 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
       const x = clientX - rect.left;
       const y = clientY - rect.top;
 
-      if (y > rect.height * 0.70) return;
+      // Batasi interaksi hanya di area air agar gelombang tidak sampai ke pasir
+      if (y > rect.height * 0.60) return;
 
       ripplesRef.current.push({
         x,
@@ -345,28 +348,57 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
           ctx.restore();
         }
 
-        for (let i = ripplesRef.current.length - 1; i >= 0; i--) {
-          const r = ripplesRef.current[i];
-          r.radius += r.speed;
-          r.alpha -= 0.012;
-
-          if (r.alpha <= 0 || r.radius >= r.maxRadius) {
-            ripplesRef.current.splice(i, 1);
-            continue;
-          }
-
+        // Clip semua ripple ke area air (di atas garis pantai) agar tidak meluber ke pasir.
+        // Dibangun sekali per frame, lalu semua ripple digambar di dalamnya.
+        if (ripplesRef.current.length > 0) {
           ctx.save();
           ctx.beginPath();
-          ctx.ellipse(r.x, r.y, r.radius, r.radius * 0.42, 0, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(255, 255, 255, ${r.alpha * 0.95})`;
-          ctx.lineWidth = 2.4;
-          ctx.stroke();
+          ctx.moveTo(-4, -4);
+          ctx.lineTo(width + 4, -4);
+          ctx.lineTo(width + 4, getTideY(width + 4));
+          for (let x = width; x >= -4; x -= 16) {
+            ctx.lineTo(x, getTideY(x));
+          }
+          ctx.closePath();
+          ctx.clip();
 
-          ctx.beginPath();
-          ctx.ellipse(r.x, r.y, r.radius * 0.68, r.radius * 0.28, 0, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(168, 220, 240, ${r.alpha * 0.75})`;
-          ctx.lineWidth = 1.8;
-          ctx.stroke();
+          for (let i = ripplesRef.current.length - 1; i >= 0; i--) {
+            const r = ripplesRef.current[i];
+            r.radius += r.speed;
+            r.alpha -= 0.012;
+
+            if (r.alpha <= 0 || r.radius >= r.maxRadius) {
+              ripplesRef.current.splice(i, 1);
+              continue;
+            }
+
+            // Fade-out halus saat tepi bawah ripple mendekati garis pantai
+            // agar tidak terpotong kasar oleh clip dan tidak menyentuh pasir.
+            const shoreY = getTideY(r.x);
+            const distToShore = shoreY - r.y;
+            const verticalReach = r.radius * 0.42;
+            const shoreFade = Math.max(
+              0,
+              Math.min(1, (distToShore - verticalReach) / 36)
+            );
+            if (shoreFade <= 0) {
+              ripplesRef.current.splice(i, 1);
+              continue;
+            }
+            const fadeAlpha = r.alpha * shoreFade;
+
+            ctx.beginPath();
+            ctx.ellipse(r.x, r.y, r.radius, r.radius * 0.42, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(255, 255, 255, ${fadeAlpha * 0.95})`;
+            ctx.lineWidth = 2.4;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.ellipse(r.x, r.y, r.radius * 0.68, r.radius * 0.28, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(168, 220, 240, ${fadeAlpha * 0.75})`;
+            ctx.lineWidth = 1.8;
+            ctx.stroke();
+          }
           ctx.restore();
         }
 
