@@ -57,6 +57,9 @@ export const SwimmingDuck: React.FC<SwimmingDuckProps> = ({
   const y = useMotionValue(0);
 
   const duckRef = useRef<HTMLDivElement | null>(null);
+  // Ref ke badan visual bebek (yang kena scale 0.62 di mobile) — dipakai
+  // untuk mengukur titik gelombang agar pas di semua ukuran layar.
+  const bodyRef = useRef<HTMLDivElement | null>(null);
 
   const WATER_SHALLOW_LINE_Y = 22;
 
@@ -133,15 +136,20 @@ export const SwimmingDuck: React.FC<SwimmingDuckProps> = ({
 
       if (currentTime - lastCollisionCheck > 50 && duckRef.current) {
         lastCollisionCheck = currentTime;
-        const rect = duckRef.current.getBoundingClientRect();
+        // Ukur dari badan visual (bodyRef) agar pas di mobile (scale 0.62)
+        // maupun PC (scale 1). Fallback ke wrapper luar bila belum siap.
+        const bodyRect = bodyRef.current?.getBoundingClientRect();
+        const rect = bodyRect && bodyRect.width > 0 && bodyRect.height > 0
+          ? bodyRect
+          : duckRef.current.getBoundingClientRect();
         if (rect.right > 0 && rect.left < window.innerWidth) {
-          // Titik gelombang tepat di garis air bawah badan bebek (bukan di
-          // tengah kotak padding), + sedikit lead ke arah gerak (+x) agar
-          // lingkaran tidak terlihat ketinggalan di belakang bebek.
-          const leadX = 9;
+          // Titik gelombang di garis air bawah perut bebek + sedikit lead ke
+          // arah gerak (+x) agar lingkaran tidak terlihat ketinggalan.
+          const isMobileNow = typeof window !== 'undefined' && window.innerWidth < 640;
+          const leadX = isMobileNow ? 5 : 10;
           onDuckSwim(
             rect.left + rect.width / 2 + leadX,
-            rect.bottom - 14
+            rect.top + rect.height * 0.88
           );
         }
       }
@@ -174,10 +182,10 @@ export const SwimmingDuck: React.FC<SwimmingDuckProps> = ({
       if (nextY <= WATER_SHALLOW_LINE_Y) {
         y.set(0);
         setIsWaddling(false);
-        if (duckRef.current) {
-          const rect = duckRef.current.getBoundingClientRect();
+        const splashRect = bodyRef.current?.getBoundingClientRect() ?? duckRef.current?.getBoundingClientRect();
+        if (splashRect) {
           if (onDuckSplash) {
-            onDuckSplash(rect.left + rect.width / 2, rect.top + rect.height * 0.75);
+            onDuckSplash(splashRect.left + splashRect.width / 2, splashRect.top + splashRect.height * 0.88);
           }
         }
         return;
@@ -263,6 +271,7 @@ export const SwimmingDuck: React.FC<SwimmingDuckProps> = ({
       className="absolute top-[28%] sm:top-[44%] left-0 cursor-grab active:cursor-grabbing select-none pointer-events-auto p-4 -m-4"
     >
       <motion.div
+        ref={bodyRef}
         animate={
           isGrabbed
             ? { rotate: 12, y: 0 }

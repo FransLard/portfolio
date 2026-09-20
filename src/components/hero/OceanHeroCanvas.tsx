@@ -103,13 +103,14 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
       // Batasi interaksi hanya di area air agar gelombang tidak sampai ke pasir
       if (y > rect.height * 0.60) return;
 
+      // Ripple lembut & perlahan: mulai kecil, alpha rendah, mengembang pelan.
       ripplesRef.current.push({
         x,
         y,
-        radius: 4,
+        radius: 3,
         maxRadius: size,
-        alpha: 0.55,
-        speed: 1.9
+        alpha: 0.35,
+        speed: 1.0
       });
     };
 

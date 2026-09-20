@@ -209,13 +209,12 @@ export const HeroPhysicsStage = forwardRef<HeroPhysicsStageHandle, HeroPhysicsSt
     const handleDuckSwim = (duckX: number, duckY: number) => {
 
       const now = performance.now();
-      // Spawn lebih rapat (150ms) agar selalu ada cincin muda tepat di bawah
-      // bebek — lingkaran statis + bebek jalan 40px/s memang bikin cincin tua
-      // terlihat ketinggalan, itu wake yang wajar. Cincin muda yang rapat
-      // bikin gelombang terlihat nempel di badan bebek.
-      if (now - lastRippleTimeRef.current > 150) {
+      // Gelombang bebek yang lembut & perlahan: spawn jarang (600ms) dan
+      // cincin kecil. Berlaku sama di PC maupun mobile.
+      const shouldRipple = now - lastRippleTimeRef.current > 600;
+      if (shouldRipple) {
         lastRippleTimeRef.current = now;
-        onRipple(duckX, duckY, 50);
+        onRipple(duckX, duckY, 38);
       }
 
       // Deteksi tabrakan secara sinkron agar flag hit valid di mobile maupun PC.
@@ -235,7 +234,9 @@ export const HeroPhysicsStage = forwardRef<HeroPhysicsStageHandle, HeroPhysicsSt
         const dist = Math.sqrt(dx ** 2 + dy ** 2);
         if (dist < hitThreshold && dist > 0) {
           hitIds.add(letter.id);
-          onRipple(letterCenterX, letterCenterY, 55);
+          // Ripple tabrakan huruf juga dilembutkan & ikut throttle yang sama
+          // agar tidak brutal saat bebek nempel lama.
+          if (shouldRipple) onRipple(letterCenterX, letterCenterY, 38);
         }
       }
 
