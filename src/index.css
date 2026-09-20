@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* Design tokens — tidak ada perubahan visual, hanya dokumentasi. */
 @layer base {
   :root {
     --bg-primary: #0b2420;
