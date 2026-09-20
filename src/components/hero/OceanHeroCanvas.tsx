@@ -37,6 +37,9 @@ interface Shark {
   diving: number;
 }
 
+// Batas area air (rasio tinggi canvas) — nilai sama 0.60, diekstrak agar konsisten.
+const WATER_AREA_LIMIT_RATIO = 0.60;
+
 export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string }>(
   ({ className = '' }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -56,7 +59,7 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
 
       // Batasi interaksi hanya di area air (jauh di atas garis pantai 0.68)
       // agar ripple tidak spawn di pasir
-      if (y > rect.height * 0.60) return;
+      if (y > rect.height * WATER_AREA_LIMIT_RATIO) return;
 
       ripplesRef.current.push({
         x,
@@ -101,7 +104,7 @@ export const OceanHeroCanvas = forwardRef<OceanHeroHandle, { className?: string 
       const y = clientY - rect.top;
 
       // Batasi interaksi hanya di area air agar gelombang tidak sampai ke pasir
-      if (y > rect.height * 0.60) return;
+      if (y > rect.height * WATER_AREA_LIMIT_RATIO) return;
 
       // Ripple lembut & perlahan: mulai kecil, alpha rendah, mengembang pelan.
       ripplesRef.current.push({
