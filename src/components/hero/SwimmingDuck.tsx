@@ -63,6 +63,9 @@ export const SwimmingDuck: React.FC<SwimmingDuckProps> = ({
 
   const WATER_SHALLOW_LINE_Y = 22;
 
+// Kecepatan renang bebek — nilai sama, diekstrak agar mudah di-tune.
+const DUCK_SWIM_SPEED_PX_PER_SEC = 40;
+
   useEffect(() => {
     if (expression === 'impact') {
       setIsGrabbed(false);
@@ -124,7 +127,7 @@ export const SwimmingDuck: React.FC<SwimmingDuckProps> = ({
       lastTime = currentTime;
 
       const currX = x.get();
-      const speed = 40;
+      const speed = DUCK_SWIM_SPEED_PX_PER_SEC;
       let nextX = currX + speed * delta;
       const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1400;
 
@@ -269,6 +272,8 @@ export const SwimmingDuck: React.FC<SwimmingDuckProps> = ({
       whileHover={{ scale: 1.15 }}
       whileTap={{ scale: 1.35 }}
       className="absolute top-[28%] sm:top-[44%] left-0 cursor-grab active:cursor-grabbing select-none pointer-events-auto p-4 -m-4"
+      role="img"
+      aria-label="Bebek berenang yang bisa digeser"
     >
       <motion.div
         ref={bodyRef}
