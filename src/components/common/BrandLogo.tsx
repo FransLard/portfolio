@@ -1,24 +1,27 @@
 import React from 'react';
 
+type BrandLogoSize = 'sm' | 'md' | 'lg' | 'xl';
+
 interface BrandLogoProps {
   className?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: BrandLogoSize;
   withText?: boolean;
 }
+
+// Map ukuran — nilai class sama persis, dipindah keluar render agar tidak realokasi.
+const BRAND_SIZE_MAP: Record<BrandLogoSize, { img: string; text: string }> = {
+  sm: { img: 'w-11 h-11', text: 'text-xs' },
+  md: { img: 'w-14 h-14', text: 'text-sm' },
+  lg: { img: 'w-20 h-20', text: 'text-base' },
+  xl: { img: 'w-32 h-32', text: 'text-lg' }
+};
 
 export const BrandLogo: React.FC<BrandLogoProps> = ({
   className = '',
   size = 'md',
   withText = false
 }) => {
-  const sizeMap = {
-    sm: { img: 'w-11 h-11', text: 'text-xs' },
-    md: { img: 'w-14 h-14', text: 'text-sm' },
-    lg: { img: 'w-20 h-20', text: 'text-base' },
-    xl: { img: 'w-32 h-32', text: 'text-lg' }
-  };
-
-  const currentSize = sizeMap[size];
+  const currentSize = BRAND_SIZE_MAP[size];
 
   return (
     <div className={`inline-flex items-center gap-2.5 ${className}`}>
