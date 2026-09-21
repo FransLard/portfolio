@@ -12,6 +12,9 @@ import { JourneyTimeline } from './components/journey/JourneyTimeline';
 import { ContactSection } from './components/contact/ContactSection';
 import { ProjectCaseStudyModal } from './components/projects/ProjectCaseStudyModal';
 
+// Shell theme — class sama persis, diekstrak agar mudah dirawat. Tanpa ubah tampilan.
+const APP_SHELL_CLASS = 'min-h-screen bg-[#fff3df] text-[#0f172a] selection:bg-[#0a5b85] selection:text-white';
+
 export function App() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [activeModalProject, setActiveModalProject] = useState<Project | null>(null);
@@ -19,7 +22,7 @@ export function App() {
   useLenisSmoothScroll();
 
   return (
-    <div className="min-h-screen bg-[#fff3df] text-[#0f172a] selection:bg-[#0a5b85] selection:text-white">
+    <div className={APP_SHELL_CLASS}>
       {showWelcome && (
         <WelcomeAnimation onComplete={() => setShowWelcome(false)} />
       )}
