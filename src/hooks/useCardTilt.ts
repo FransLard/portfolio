@@ -1,5 +1,10 @@
 import { useState, useCallback, useRef } from 'react';
 
+// Konstanta tilt — nilai sama persis, diekstrak tanpa ubah visual.
+const TILT_PERSPECTIVE_PX = 1000;
+const TILT_TRANSITION_HOVER = 'transform 0.1s ease-out';
+const TILT_TRANSITION_IDLE = 'transform 0.5s ease-out';
+
 export function useCardTilt(maxRotation: number = 7) {
   const [rotation, setRotation] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -40,8 +45,8 @@ export function useCardTilt(maxRotation: number = 7) {
       onMouseEnter: handleMouseEnter,
       onMouseLeave: handleMouseLeave,
       style: {
-        transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-        transition: isHovered ? 'transform 0.1s ease-out' : 'transform 0.5s ease-out'
+        transform: `perspective(${TILT_PERSPECTIVE_PX}px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+        transition: isHovered ? TILT_TRANSITION_HOVER : TILT_TRANSITION_IDLE
       }
     }
   };
