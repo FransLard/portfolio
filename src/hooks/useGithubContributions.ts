@@ -22,6 +22,9 @@ export interface ContributionStats {
 const CACHE_PREFIX = 'gh_contrib_';
 const CACHE_TTL_MS = 30 * 60 * 1000;
 
+// Fallback tahun — nilai sama persis, diekstrak agar konsisten.
+const FALLBACK_AVAILABLE_YEARS = ['lastYear', '2026', '2025', '2024', '2023'];
+
 export const useGithubContributions = (username: string) => {
   const [selectedYear, setSelectedYear] = useState<string>('lastYear');
   const [data, setData] = useState<ContributionResponse | null>(null);
@@ -101,13 +104,13 @@ export const useGithubContributions = (username: string) => {
         maxDay: null,
         activeDaysCount: 0,
         averagePerActiveDay: 0,
-        availableYears: ['lastYear', '2026', '2025', '2024', '2023']
+        availableYears: [...FALLBACK_AVAILABLE_YEARS]
       };
     }
 
     const availableYears = data.total
       ? ['lastYear', ...Object.keys(data.total).filter((y) => y !== 'lastYear').sort((a, b) => Number(b) - Number(a))]
-      : ['lastYear', '2026', '2025', '2024', '2023'];
+      : [...FALLBACK_AVAILABLE_YEARS];
 
     const totalContributions =
       data.total && data.total[selectedYear] !== undefined
