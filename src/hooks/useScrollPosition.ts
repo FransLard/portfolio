@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
 
+// Threshold & offset — nilai sama persis, diekstrak agar mudah dirawat.
+// Tidak ada perubahan perilaku scroll / tampilan.
+const SCROLLED_THRESHOLD_PX = 40;
+const NAV_OFFSET_PX = 80;
+
 export function useScrollPosition() {
   const [scrollY, setScrollY] = useState<number>(0);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
@@ -8,7 +13,7 @@ export function useScrollPosition() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrollY(currentScrollY);
-      setIsScrolled(currentScrollY > 40);
+      setIsScrolled(currentScrollY > SCROLLED_THRESHOLD_PX);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -18,7 +23,7 @@ export function useScrollPosition() {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      const navOffset = 80;
+      const navOffset = NAV_OFFSET_PX;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - navOffset;
 
