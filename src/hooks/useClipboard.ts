@@ -4,7 +4,10 @@ import { useState, useCallback, useRef, useEffect } from 'react';
  * Hook clipboard kecil — tidak ada perubahan UI.
  * Menambah cleanup timer + fallback error handling agar tidak leak.
  */
-export function useClipboard(resetDelay: number = 2000) {
+// Default jeda reset status clipboard — nilai sama, diekstrak tanpa ubah perilaku.
+const DEFAULT_CLIPBOARD_RESET_DELAY_MS = 2000;
+
+export function useClipboard(resetDelay: number = DEFAULT_CLIPBOARD_RESET_DELAY_MS) {
   const [copied, setCopied] = useState<boolean>(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
