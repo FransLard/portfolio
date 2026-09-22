@@ -15,6 +15,14 @@ import { TactileButton } from '../ui/TactileButton';
 import { scrollToSectionLenis } from '../../hooks/useLenisSmoothScroll';
 import { profileData } from '../../data/portfolioData';
 
+// Konstanta tabrakan bebek-kepiting — nilai sama persis, diekstrak tanpa ubah gameplay.
+const DUCK_CRAB_COLLISION_DX = 60;
+const DUCK_CRAB_COLLISION_DY = 48;
+const DUCK_IMPACT_RESET_MS = 2000;
+const COLLISION_COOLDOWN_MS = 3200;
+const DUCK_SPLASH_INTENSITY = 1.3;
+const DUCK_SWIM_RIPPLE_SIZE = 45;
+
 export const HeroSection: React.FC = () => {
   const oceanRef = useRef<OceanHeroHandle | null>(null);
   const stageRef = useRef<HeroPhysicsStageHandle | null>(null);
@@ -48,18 +56,18 @@ export const HeroSection: React.FC = () => {
     const dx = Math.abs(duckCenterX - crabCenterX);
     const dy = Math.abs(duckCenterY - crabCenterY);
 
-    if (dx < 60 && dy < 48) {
+    if (dx < DUCK_CRAB_COLLISION_DX && dy < DUCK_CRAB_COLLISION_DY) {
       collisionCooldownRef.current = true;
       crabRef.current.triggerStun(duckCenterX < crabCenterX ? 'right' : 'left');
       setDuckExpression('impact');
 
       setTimeout(() => {
         setDuckExpression('normal');
-      }, 2000);
+      }, DUCK_IMPACT_RESET_MS);
 
       setTimeout(() => {
         collisionCooldownRef.current = false;
-      }, 3200);
+      }, COLLISION_COOLDOWN_MS);
     }
   };
 
@@ -79,7 +87,7 @@ export const HeroSection: React.FC = () => {
     if (stageRef.current) {
       stageRef.current.handleDuckSwim(duckX, duckY);
     } else {
-      handleRipple(duckX, duckY, 45);
+      handleRipple(duckX, duckY, DUCK_SWIM_RIPPLE_SIZE);
     }
   };
 
@@ -99,7 +107,7 @@ export const HeroSection: React.FC = () => {
         expression={duckExpression}
         onDuckDrop={handleDuckDrop}
         onDuckSwim={handleDuckSwim}
-        onDuckSplash={(x, y) => handleSplash(x, y, 1.3)}
+        onDuckSplash={(x, y) => handleSplash(x, y, DUCK_SPLASH_INTENSITY)}
         onDuckWaddle={checkDuckCrabCollision}
       />
 
