@@ -21,6 +21,22 @@ const CRAB_DIALOGUES = [
   'Audit keamanan buatan Frans Lampard rapi dan teliti banget!'
 ];
 
+const CRAB_STUN_QUIP = 'OUCH! *Dizzy pinch!* >_<';
+
+// Konstanta gerak & timing kepiting — nilai sama persis, diekstrak tanpa ubah visual.
+const CRAB_SPAWN_OFFSET_PX = 80;
+const CRAB_SPAWN_FALLBACK_WIDTH = 1500;
+const CRAB_FALLBACK_WIDTH = 1400;
+const CRAB_WRAP_OFFSET_PX = 120;
+const CRAB_SPEED_PX_PER_SEC = 34;
+const CRAB_MAX_FRAME_DELTA_SEC = 0.05;
+const CRAB_KNOCKBACK_PX = 25;
+const CRAB_KNOCKBACK_RECOVER_MS = 900;
+const CRAB_STUN_RECOVER_MS = 2800;
+const CRAB_QUIP_INTERVAL_MS = 8800;
+const CRAB_QUIP_VISIBLE_MS = 3000;
+const CRAB_VIEWPORT_MARGIN_PX = 100;
+
 const createShuffledDeck = (items: string[], lastItem?: string): string[] => {
   const deck = [...items];
   for (let i = deck.length - 1; i > 0; i--) {
@@ -34,7 +50,7 @@ const createShuffledDeck = (items: string[], lastItem?: string): string[] => {
 };
 
 export const BeachCrab = forwardRef<BeachCrabHandle>((_props, ref) => {
-  const screenInitialWidth = typeof window !== 'undefined' ? window.innerWidth + 80 : 1500;
+  const screenInitialWidth = typeof window !== 'undefined' ? window.innerWidth + CRAB_SPAWN_OFFSET_PX : CRAB_SPAWN_FALLBACK_WIDTH;
   const x = useMotionValue(screenInitialWidth);
   const [currentQuip, setCurrentQuip] = useState<string | null>(null);
   const [isStunned, setIsStunned] = useState<boolean>(false);
@@ -50,18 +66,18 @@ export const BeachCrab = forwardRef<BeachCrabHandle>((_props, ref) => {
       if (isStunnedRef.current) return;
       isStunnedRef.current = true;
       setIsStunned(true);
-      setKnockbackDir(knockbackDirection === 'left' ? -25 : 25);
-      setCurrentQuip('OUCH! *Dizzy pinch!* >_<');
+      setKnockbackDir(knockbackDirection === 'left' ? -CRAB_KNOCKBACK_PX : CRAB_KNOCKBACK_PX);
+      setCurrentQuip(CRAB_STUN_QUIP);
 
       setTimeout(() => {
         setKnockbackDir(0);
-      }, 900);
+      }, CRAB_KNOCKBACK_RECOVER_MS);
 
       setTimeout(() => {
         isStunnedRef.current = false;
         setIsStunned(false);
         setCurrentQuip(null);
-      }, 2800);
+      }, CRAB_STUN_RECOVER_MS);
     },
     getCrabRect: () => {
       return crabRef.current ? crabRef.current.getBoundingClientRect() : null;
@@ -74,17 +90,17 @@ export const BeachCrab = forwardRef<BeachCrabHandle>((_props, ref) => {
     let lastTime = performance.now();
 
     const scuttleLoop = (currentTime: number) => {
-      const delta = Math.min(0.05, (currentTime - lastTime) / 1000);
+      const delta = Math.min(CRAB_MAX_FRAME_DELTA_SEC, (currentTime - lastTime) / 1000);
       lastTime = currentTime;
 
       if (!isStunnedRef.current) {
         const currX = x.get();
-        const crabSpeed = 34;
+        const crabSpeed = CRAB_SPEED_PX_PER_SEC;
         let nextX = currX - crabSpeed * delta;
-        const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 1400;
+        const screenWidth = typeof window !== 'undefined' ? window.innerWidth : CRAB_FALLBACK_WIDTH;
 
-        if (nextX < -120) {
-          nextX = screenWidth + 120;
+        if (nextX < -CRAB_WRAP_OFFSET_PX) {
+          nextX = screenWidth + CRAB_WRAP_OFFSET_PX;
         }
 
         x.set(nextX);
@@ -101,7 +117,7 @@ export const BeachCrab = forwardRef<BeachCrabHandle>((_props, ref) => {
     const quipInterval = setInterval(() => {
       if (crabRef.current && !isStunnedRef.current) {
         const rect = crabRef.current.getBoundingClientRect();
-        if (rect.right > 100 && rect.left < window.innerWidth - 100) {
+        if (rect.right > CRAB_VIEWPORT_MARGIN_PX && rect.left < window.innerWidth - CRAB_VIEWPORT_MARGIN_PX) {
           if (deckRef.current.length === 0) {
             deckRef.current = createShuffledDeck(CRAB_DIALOGUES, lastQuipRef.current);
           }
@@ -112,10 +128,10 @@ export const BeachCrab = forwardRef<BeachCrabHandle>((_props, ref) => {
 
           setTimeout(() => {
             if (!isStunnedRef.current) setCurrentQuip(null);
-          }, 3000);
+          }, CRAB_QUIP_VISIBLE_MS);
         }
       }
-    }, 8800);
+    }, CRAB_QUIP_INTERVAL_MS);
 
     return () => clearInterval(quipInterval);
   }, []);
