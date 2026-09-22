@@ -64,7 +64,15 @@ export const SwimmingDuck: React.FC<SwimmingDuckProps> = ({
   const WATER_SHALLOW_LINE_Y = 22;
 
 // Kecepatan renang bebek — nilai sama, diekstrak agar mudah di-tune.
+// Timing animasi — nilai sama persis, diekstrak tanpa ubah visual / perilaku.
 const DUCK_SWIM_SPEED_PX_PER_SEC = 40;
+const DUCK_BLINK_INTERVAL_MS = 4200;
+const DUCK_BLINK_DURATION_MS = 160;
+const DUCK_QUIP_INTERVAL_MS = 7200;
+const DUCK_QUIP_VISIBLE_MS = 3200;
+const DUCK_COLLISION_THROTTLE_MS = 50;
+const DUCK_WADDLE_SPEED_PX_PER_SEC = 75;
+const DUCK_MAX_FRAME_DELTA_SEC = 0.05;
 
   useEffect(() => {
     if (expression === 'impact') {
@@ -81,8 +89,8 @@ const DUCK_SWIM_SPEED_PX_PER_SEC = 40;
       setIsBlinking(true);
       setTimeout(() => {
         setIsBlinking(false);
-      }, 160);
-    }, 4200);
+      }, DUCK_BLINK_DURATION_MS);
+    }, DUCK_BLINK_INTERVAL_MS);
 
     return () => clearInterval(blinkInterval);
   }, []);
@@ -107,10 +115,10 @@ const DUCK_SWIM_SPEED_PX_PER_SEC = 40;
 
           setTimeout(() => {
             setCurrentQuip(null);
-          }, 3200);
+          }, DUCK_QUIP_VISIBLE_MS);
         }
       }
-    }, 7200);
+    }, DUCK_QUIP_INTERVAL_MS);
 
     return () => clearInterval(quipInterval);
   }, [isGrabbed, isWaddling]);
@@ -123,7 +131,7 @@ const DUCK_SWIM_SPEED_PX_PER_SEC = 40;
     let lastCollisionCheck = 0;
 
     const swimLoop = (currentTime: number) => {
-      const delta = Math.min(0.05, (currentTime - lastTime) / 1000);
+      const delta = Math.min(DUCK_MAX_FRAME_DELTA_SEC, (currentTime - lastTime) / 1000);
       lastTime = currentTime;
 
       const currX = x.get();
@@ -137,7 +145,7 @@ const DUCK_SWIM_SPEED_PX_PER_SEC = 40;
 
       x.set(nextX);
 
-      if (currentTime - lastCollisionCheck > 50 && duckRef.current) {
+      if (currentTime - lastCollisionCheck > DUCK_COLLISION_THROTTLE_MS && duckRef.current) {
         lastCollisionCheck = currentTime;
         // Ukur dari badan visual (bodyRef) agar pas di mobile (scale 0.62)
         // maupun PC (scale 1). Fallback ke wrapper luar bila belum siap.
@@ -171,11 +179,11 @@ const DUCK_SWIM_SPEED_PX_PER_SEC = 40;
     let lastTime = performance.now();
 
     const waddleStep = (currentTime: number) => {
-      const delta = Math.min(0.05, (currentTime - lastTime) / 1000);
+      const delta = Math.min(DUCK_MAX_FRAME_DELTA_SEC, (currentTime - lastTime) / 1000);
       lastTime = currentTime;
 
       const currY = y.get();
-      const waddleSpeed = 75;
+      const waddleSpeed = DUCK_WADDLE_SPEED_PX_PER_SEC;
       const nextY = currY - waddleSpeed * delta;
 
       if (duckRef.current && onDuckWaddle) {
