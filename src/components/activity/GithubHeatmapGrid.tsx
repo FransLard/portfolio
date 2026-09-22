@@ -9,6 +9,12 @@ interface GithubHeatmapGridProps {
 
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
+// Konstanta layout heatmap — nilai sama persis, diekstrak tanpa ubah tampilan.
+const HEATMAP_MIN_MONTH_GAP_COLS = 3;
+const HEATMAP_TOOLTIP_OFFSET_Y_PX = 44;
+const HEATMAP_SKELETON_CELLS = 364;
+const HEATMAP_MOBILE_BREAKPOINT_PX = 640;
+
 const formatIndonesianDate = (dateString: string): string => {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return dateString;
@@ -46,7 +52,7 @@ export const GithubHeatmapGrid: React.FC<GithubHeatmapGridProps> = ({ contributi
   useEffect(() => {
     if (containerRef.current) {
       const scrollEl = containerRef.current.querySelector('.heatmap-scroll-wrapper');
-      if (scrollEl && window.innerWidth < 640) {
+      if (scrollEl && window.innerWidth < HEATMAP_MOBILE_BREAKPOINT_PX) {
         scrollEl.scrollLeft = scrollEl.scrollWidth;
       }
     }
@@ -58,7 +64,7 @@ export const GithubHeatmapGrid: React.FC<GithubHeatmapGridProps> = ({ contributi
         <div className="min-w-[750px] flex flex-col gap-2.5 animate-pulse">
           <div className="h-4 w-40 bg-[#ecd7b0]/60 rounded-md mb-2" />
           <div className="grid grid-flow-col grid-rows-7 gap-1.5">
-            {Array.from({ length: 364 }).map((_, idx) => (
+            {Array.from({ length: HEATMAP_SKELETON_CELLS }).map((_, idx) => (
               <div key={idx} className="w-3.5 h-3.5 rounded-[3px] bg-[#fdeed3] border border-[#ecd0a0]" />
             ))}
           </div>
@@ -87,7 +93,7 @@ export const GithubHeatmapGrid: React.FC<GithubHeatmapGridProps> = ({ contributi
     const firstDayOfWeek = week[0];
     if (firstDayOfWeek) {
       const monthIndex = new Date(firstDayOfWeek.date).getMonth();
-      if (monthIndex !== previousMonth && colIdx - lastColIdx >= 3) {
+      if (monthIndex !== previousMonth && colIdx - lastColIdx >= HEATMAP_MIN_MONTH_GAP_COLS) {
         monthLabels.push({
           month: MONTH_NAMES[monthIndex],
           colIndex: colIdx
@@ -122,7 +128,7 @@ export const GithubHeatmapGrid: React.FC<GithubHeatmapGridProps> = ({ contributi
             transition={{ duration: 0.12 }}
             style={{
               left: `${hoveredCell.posX}px`,
-              top: `${hoveredCell.posY - 44}px`,
+              top: `${hoveredCell.posY - HEATMAP_TOOLTIP_OFFSET_Y_PX}px`,
               transform: 'translateX(-50%)'
             }}
             className="pointer-events-none absolute z-50 px-3 py-1.5 rounded-xl bg-[#0f172a] text-white text-[11px] font-mono shadow-2xl border border-[#3ed6a4]/40 whitespace-nowrap"
