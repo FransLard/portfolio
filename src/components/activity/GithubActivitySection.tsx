@@ -6,10 +6,15 @@ import { useGithubContributions } from '../../hooks/useGithubContributions';
 import { GithubHeatmapGrid } from './GithubHeatmapGrid';
 import { profileData } from '../../data/portfolioData';
 
+// Nama bulan pendek ID — nilai sama persis, diekstrak agar reusable.
+const ID_SHORT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+const LAST_YEAR_LABEL = '1 Tahun Terakhir';
+const LAST_YEAR_KEY = 'lastYear';
+
 const formatIndonesianDateShort = (dateString: string): string => {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return dateString;
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  const months = ID_SHORT_MONTHS;
   return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
 };
 
@@ -21,7 +26,7 @@ export const GithubActivitySection: React.FC = () => {
   const { data, loading, error, selectedYear, setSelectedYear, stats } = useGithubContributions(username);
 
   const formatYearLabel = (yearKey: string): string => {
-    if (yearKey === 'lastYear') return '1 Tahun Terakhir';
+    if (yearKey === LAST_YEAR_KEY) return LAST_YEAR_LABEL;
     return yearKey;
   };
 
