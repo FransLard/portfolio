@@ -20,7 +20,12 @@ export interface ContributionStats {
 }
 
 const CACHE_PREFIX = 'gh_contrib_';
-const CACHE_TTL_MS = 30 * 60 * 1000;
+const CACHE_TTL_MINUTES = 30;
+const CACHE_TTL_MS = CACHE_TTL_MINUTES * 60 * 1000;
+
+// Key tahun — nilai sama persis, diekstrak agar konsisten antar file.
+const LAST_YEAR_KEY = 'lastYear';
+const LAST_YEAR_QUERY = '?y=last';
 
 // Fallback tahun — nilai sama persis, diekstrak agar konsisten.
 const FALLBACK_AVAILABLE_YEARS = ['lastYear', '2026', '2025', '2024', '2023'];
@@ -57,7 +62,7 @@ export const useGithubContributions = (username: string) => {
       }
 
       try {
-        const queryParam = selectedYear === 'lastYear' ? '?y=last' : `?y=${selectedYear}`;
+        const queryParam = selectedYear === LAST_YEAR_KEY ? LAST_YEAR_QUERY : `?y=${selectedYear}`;
         const response = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}${queryParam}`);
 
         if (!response.ok) {
@@ -109,7 +114,7 @@ export const useGithubContributions = (username: string) => {
     }
 
     const availableYears = data.total
-      ? ['lastYear', ...Object.keys(data.total).filter((y) => y !== 'lastYear').sort((a, b) => Number(b) - Number(a))]
+      ? [LAST_YEAR_KEY, ...Object.keys(data.total).filter((y) => y !== LAST_YEAR_KEY).sort((a, b) => Number(b) - Number(a))]
       : [...FALLBACK_AVAILABLE_YEARS];
 
     const totalContributions =
