@@ -8,6 +8,11 @@ let globalLenisInstance: Lenis | null = null;
 const NAV_OFFSET_PX = -76;
 const SCROLL_DURATION_SEC = 1.4;
 
+// Konstanta konfigurasi Lenis — nilai sama persis, diekstrak tanpa ubah feel scroll.
+const LENIS_DURATION = 1.2;
+const LENIS_WHEEL_MULTIPLIER = 1.0;
+const LENIS_TOUCH_MULTIPLIER = 1.5;
+
 export function stopLenisScroll(): void {
   if (globalLenisInstance) {
     globalLenisInstance.stop();
@@ -34,13 +39,13 @@ export function scrollToSectionLenis(id: string): void {
 export function useLenisSmoothScroll(): void {
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: LENIS_DURATION,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1.0,
-      touchMultiplier: 1.5
+      wheelMultiplier: LENIS_WHEEL_MULTIPLIER,
+      touchMultiplier: LENIS_TOUCH_MULTIPLIER
     });
 
     globalLenisInstance = lenis;
