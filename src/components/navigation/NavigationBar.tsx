@@ -1,11 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
 import { Copy, Check, Menu, X } from 'lucide-react';
 import { useScrollPosition } from '../../hooks/useScrollPosition';
 import { scrollToSectionLenis } from '../../hooks/useLenisSmoothScroll';
 import { useClipboard } from '../../hooks/useClipboard';
 import { profileData } from '../../data/portfolioData';
 import { BrandLogo } from '../common/BrandLogo';
+
+// Konstanta scroll-spy & motion — nilai sama persis, diekstrak tanpa ubah visual/perilaku.
+const NAV_SCROLL_SPY_OFFSET_PX = 240;
+const NAV_BOTTOM_THRESHOLD_PX = 80;
+const NAV_CLICK_SCROLL_DELAY_MS = 60;
+const NAV_MANUAL_RESET_MS = 1500;
+const NAV_PROGRESS_SPRING = { stiffness: 120, damping: 28, mass: 0.3 };
 
 export const NavigationBar: React.FC = () => {
   const { isScrolled } = useScrollPosition();
@@ -24,6 +31,9 @@ export const NavigationBar: React.FC = () => {
 
   const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
   const [pillStyle, setPillStyle] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
+  // Efek ala landonorris "Next Race pill": global scroll progress + status pill
+  const { scrollYProgress } = useScroll();
+  const progressX = useSpring(scrollYProgress, NAV_PROGRESS_SPRING);
   const isManualClickRef = useRef<boolean>(false);
   const manualClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -51,9 +61,9 @@ export const NavigationBar: React.FC = () => {
     const handleScroll = () => {
       if (isManualClickRef.current) return;
 
-      const scrollPosition = window.scrollY + 240;
+      const scrollPosition = window.scrollY + NAV_SCROLL_SPY_OFFSET_PX;
       const isAtBottom =
-        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 80;
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - NAV_BOTTOM_THRESHOLD_PX;
 
       if (isAtBottom) {
         setActiveSection('contact');
@@ -84,12 +94,12 @@ export const NavigationBar: React.FC = () => {
     updatePill(id);
 
     setMobileMenuOpen(false);
-    window.setTimeout(() => scrollToSectionLenis(id), 60);
+    window.setTimeout(() => scrollToSectionLenis(id), NAV_CLICK_SCROLL_DELAY_MS);
 
     if (manualClickTimerRef.current) clearTimeout(manualClickTimerRef.current);
     manualClickTimerRef.current = setTimeout(() => {
       isManualClickRef.current = false;
-    }, 1500);
+    }, NAV_MANUAL_RESET_MS);
   };
 
   return (
@@ -100,6 +110,11 @@ export const NavigationBar: React.FC = () => {
           : 'bg-transparent py-4 sm:py-5'
       }`}
     >
+      {/* progress bar global ala landonorris marquee top */}
+      <motion.div
+        style={{ scaleX: progressX }}
+        className="absolute top-0 left-0 right-0 h-[3px] origin-left bg-gradient-to-r from-[#3ed6a4] via-[#a8dcf0] to-[#ffc53d]"
+      />
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
         <button
           type="button"
@@ -148,6 +163,19 @@ export const NavigationBar: React.FC = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
+          {/* padanan "NEXT RACE: BAKU GP" -> status ketersediaan */}
+          <button
+            type="button"
+            onClick={() => handleNavClick('contact')}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#3ed6a4]/15 hover:bg-[#3ed6a4]/25 border border-[#3ed6a4]/50 text-xs font-bold text-[#d8ffe9] transition-all cursor-pointer whitespace-nowrap"
+            title="Lihat kontak"
+          >
+            <span className="relative flex w-2 h-2">
+              <span className="absolute inline-flex w-full h-full rounded-full bg-[#3ed6a4] opacity-75 animate-ping" />
+              <span className="relative inline-flex w-2 h-2 rounded-full bg-[#3ed6a4]" />
+            </span>
+            Open for Internship
+          </button>
           <button
             type="button"
             onClick={() => copy(profileData.contact.email)}
