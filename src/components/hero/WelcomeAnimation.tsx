@@ -6,22 +6,44 @@ interface WelcomeAnimationProps {
   onComplete: () => void;
 }
 
+// Konstanta timing welcome — nilai sama persis, diekstrak tanpa ubah visual/durasi.
+const WELCOME_PROGRESS_DURATION_MS = 2600;
+const WELCOME_TO_SUBMERGED_MS = 1100;
+const WELCOME_TO_DIVE_MS = 2200;
+const WELCOME_TO_DONE_MS = 2850;
+const WELCOME_FADE_DURATION_SEC = 0.65;
+
 export const WelcomeAnimation = ({ onComplete }: WelcomeAnimationProps) => {
   const [phase, setPhase] = useState<'sweep' | 'submerged' | 'dive' | 'done'>('sweep');
+  // Efek ala landonorris "Load Norris": counter % + tap to skip
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const start = performance.now();
+    const DURATION = WELCOME_PROGRESS_DURATION_MS;
+    let raf = 0;
+    const step = (now: number) => {
+      const p = Math.min(100, ((now - start) / DURATION) * 100);
+      setProgress(Math.floor(p));
+      if (p < 100) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   useEffect(() => {
     const t1 = setTimeout(() => {
       setPhase('submerged');
-    }, 1100);
+    }, WELCOME_TO_SUBMERGED_MS);
 
     const t2 = setTimeout(() => {
       setPhase('dive');
-    }, 2200);
+    }, WELCOME_TO_DIVE_MS);
 
     const t3 = setTimeout(() => {
       setPhase('done');
       onComplete();
-    }, 2850);
+    }, WELCOME_TO_DONE_MS);
 
     return () => {
       clearTimeout(t1);
@@ -38,8 +60,9 @@ export const WelcomeAnimation = ({ onComplete }: WelcomeAnimationProps) => {
         initial={{ opacity: 1 }}
         animate={{ opacity: phase === 'dive' ? 0 : 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.65, ease: 'easeInOut' }}
-        className="fixed inset-0 z-50 overflow-hidden pointer-events-auto select-none bg-[#031d33]"
+        transition={{ duration: WELCOME_FADE_DURATION_SEC, ease: 'easeInOut' }}
+        onClick={onComplete}
+        className="fixed inset-0 z-50 overflow-hidden pointer-events-auto select-none bg-[#031d33] cursor-pointer"
       >
         <motion.div
           initial={{ y: '100%' }}
@@ -172,10 +195,14 @@ export const WelcomeAnimation = ({ onComplete }: WelcomeAnimationProps) => {
             <div className="mt-6 w-48 h-1 rounded-full bg-white/20 overflow-hidden">
               <motion.div
                 initial={{ width: '0%' }}
-                animate={{ width: phase === 'submerged' || phase === 'dive' ? '100%' : '0%' }}
-                transition={{ duration: 1.2, ease: 'easeInOut' }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
                 className="h-full bg-gradient-to-r from-[#a8dcf0] to-white rounded-full"
               />
+            </div>
+            <div className="mt-3 flex items-center gap-3 font-mono text-xs text-white/80">
+              <span className="tabular-nums text-base font-bold text-white">{progress}%</span>
+              <span className="uppercase tracking-widest">tap anywhere to dive in ↓</span>
             </div>
           </motion.div>
         </div>
