@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import type { HTMLMotionProps } from 'framer-motion';
+import { useMagnetic } from '../../hooks/useMagnetic';
 
 interface TactileButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   variant?: 'primary' | 'secondary' | 'sand' | 'ghost';
@@ -21,6 +22,7 @@ const TACTILE_VARIANT_STYLES: Record<NonNullable<TactileButtonProps['variant']>,
 const TACTILE_HOVER_Y = -2;
 const TACTILE_TAP_SCALE = 0.96;
 const TACTILE_SPRING = { type: 'spring' as const, stiffness: 400, damping: 20 };
+const TACTILE_MAGNETIC_STRENGTH = 0.22;
 
 export const TactileButton: React.FC<TactileButtonProps> = ({
   variant = 'primary',
@@ -32,8 +34,11 @@ export const TactileButton: React.FC<TactileButtonProps> = ({
   const baseStyles = TACTILE_BASE_STYLES;
 
   const variantStyles = TACTILE_VARIANT_STYLES;
+  // Magnetic wrapper ala landonorris — framer transform tetap di button, magnet di wrapper
+  const { ref, onMouseMove, onMouseLeave } = useMagnetic<HTMLDivElement>(TACTILE_MAGNETIC_STRENGTH);
 
   return (
+    <div ref={ref} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave} className="inline-block">
     <motion.button
       whileHover={{ y: TACTILE_HOVER_Y }}
       whileTap={{ scale: TACTILE_TAP_SCALE }}
@@ -44,5 +49,6 @@ export const TactileButton: React.FC<TactileButtonProps> = ({
       {icon && <span className="w-4 h-4 flex items-center justify-center">{icon}</span>}
       <span>{children}</span>
     </motion.button>
+    </div>
   );
 };
