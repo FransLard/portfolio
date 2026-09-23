@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Project } from './types/portfolio';
 import { useLenisSmoothScroll } from './hooks/useLenisSmoothScroll';
 import { NavigationBar } from './components/navigation/NavigationBar';
+import { CustomCursor } from './components/common/CustomCursor';
 import { HeroSection } from './components/hero/HeroSection';
 import { WelcomeAnimation } from './components/hero/WelcomeAnimation';
 import { EditorialProfile } from './components/profile/EditorialProfile';
@@ -23,6 +24,7 @@ export function App() {
 
   return (
     <div className={APP_SHELL_CLASS}>
+      <CustomCursor />
       {showWelcome && (
         <WelcomeAnimation onComplete={() => setShowWelcome(false)} />
       )}

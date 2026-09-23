@@ -155,3 +155,50 @@ canvas {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Custom cursor ala landonorris — desktop fine-pointer saja */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 90;
+  border-radius: 9999px;
+  display: none;
+}
+html.has-custom-cursor .cursor-dot,
+html.has-custom-cursor .cursor-ring {
+  display: block;
+}
+.cursor-dot {
+  width: 7px;
+  height: 7px;
+  background: #3ed6a4;
+  box-shadow: 0 0 10px rgba(62, 214, 164, 0.9);
+}
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid rgba(62, 214, 164, 0.85);
+  mix-blend-mode: normal;
+  transition: width 0.25s ease, height 0.25s ease, background-color 0.25s ease;
+}
+.cursor-ring--active {
+  width: 58px;
+  height: 58px;
+  background: rgba(62, 214, 164, 0.14);
+}
+@media (hover: none), (pointer: coarse) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none !important;
+  }
+}
+
+/* Aksesibilitas keyboard — tanpa ubah visual mouse/sentuh. */
+:focus-visible {
+  outline: 2px solid #3ed6a4;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
