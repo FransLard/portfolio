@@ -148,11 +148,11 @@ export const NavigationBar: React.FC = () => {
                 }}
                 type="button"
                 onClick={() => handleNavClick(item.id)}
-                className="relative z-10 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors cursor-pointer group select-none"
+                className="relative z-10 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors cursor-pointer group select-none bg-[#1288b0]/20 border border-white/15"
               >
                 <span
                   className={`block wave-text-half ${
-                    isActive ? 'is-active' : ''
+                    isActive ? 'is-active' : 'is-water'
                   }`}
                 >
                   {item.label}
