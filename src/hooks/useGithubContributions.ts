@@ -31,7 +31,8 @@ const LAST_YEAR_QUERY = '?y=last';
 const FALLBACK_AVAILABLE_YEARS = ['lastYear', '2026', '2025', '2024', '2023'];
 
 export const useGithubContributions = (username: string) => {
-  const [selectedYear, setSelectedYear] = useState<string>('lastYear');
+  const currentYear = String(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState<string>(currentYear);
   const [data, setData] = useState<ContributionResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -132,9 +133,10 @@ export const useGithubContributions = (username: string) => {
       };
     }
 
+    const currentYear = String(new Date().getFullYear());
     const availableYears = data.total
-      ? [LAST_YEAR_KEY, ...Object.keys(data.total).filter((y) => y !== LAST_YEAR_KEY).sort((a, b) => Number(b) - Number(a))]
-      : [...FALLBACK_AVAILABLE_YEARS];
+      ? [currentYear, ...Object.keys(data.total).filter((y) => y !== currentYear && y !== LAST_YEAR_KEY).sort((a, b) => Number(b) - Number(a)), LAST_YEAR_KEY]
+      : [currentYear, ...FALLBACK_AVAILABLE_YEARS.filter((y) => y !== currentYear)];
 
     const totalContributions =
       data.total && data.total[selectedYear] !== undefined
