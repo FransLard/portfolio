@@ -163,19 +163,6 @@ export const NavigationBar: React.FC = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
-          {/* padanan "NEXT RACE: BAKU GP" -> status ketersediaan */}
-          <button
-            type="button"
-            onClick={() => handleNavClick('contact')}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#3ed6a4]/15 hover:bg-[#3ed6a4]/25 border border-[#3ed6a4]/50 text-xs font-bold text-[#d8ffe9] transition-all cursor-pointer whitespace-nowrap"
-            title="Lihat kontak"
-          >
-            <span className="relative flex w-2 h-2">
-              <span className="absolute inline-flex w-full h-full rounded-full bg-[#3ed6a4] opacity-75 animate-ping" />
-              <span className="relative inline-flex w-2 h-2 rounded-full bg-[#3ed6a4]" />
-            </span>
-            Open for Internship
-          </button>
           <button
             type="button"
             onClick={() => copy(profileData.contact.email)}
