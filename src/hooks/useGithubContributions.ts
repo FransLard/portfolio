@@ -19,8 +19,8 @@ export interface ContributionStats {
   availableYears: string[];
 }
 
-const CACHE_PREFIX = 'gh_contrib_';
-const CACHE_TTL_MINUTES = 30;
+const CACHE_PREFIX = 'gh_contrib_v2_';
+const CACHE_TTL_MINUTES = 10;
 const CACHE_TTL_MS = CACHE_TTL_MINUTES * 60 * 1000;
 
 // Key tahun — nilai sama persis, diekstrak agar konsisten antar file.
@@ -63,13 +63,32 @@ export const useGithubContributions = (username: string) => {
 
       try {
         const queryParam = selectedYear === LAST_YEAR_KEY ? LAST_YEAR_QUERY : `?y=${selectedYear}`;
-        const response = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}${queryParam}`);
+        const endpoints = [
+          `/api/contributions${queryParam}`,
+          `https://github-contributions-api.jogruber.de/v4/${username}${queryParam}`,
+        ];
 
-        if (!response.ok) {
-          throw new Error(`github api returned status ${response.status}`);
+        let json: ContributionResponse | null = null;
+        let lastErr: unknown = null;
+        for (const url of endpoints) {
+          try {
+            const response = await fetch(url);
+            if (!response.ok) {
+              throw new Error(`api returned status ${response.status}`);
+            }
+            const candidate: ContributionResponse = await response.json();
+            if (!candidate || !Array.isArray(candidate.contributions)) {
+              throw new Error('invalid contribution payload');
+            }
+            json = candidate;
+            break;
+          } catch (err) {
+            lastErr = err;
+          }
         }
-
-        const json: ContributionResponse = await response.json();
+        if (!json) {
+          throw lastErr instanceof Error ? lastErr : new Error('failed to fetch contribution data');
+        }
 
         if (isMounted) {
           setData(json);
