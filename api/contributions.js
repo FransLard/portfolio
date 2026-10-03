@@ -60,6 +60,7 @@ export default async function handler(req, res) {
     const contributions = [];
     for (let i = 0; i < dates.length; i++) {
       if (seen.has(dates[i])) continue;
+      if (key === "lastYear" && (dates[i] < from || dates[i] > to)) continue;
       seen.add(dates[i]);
       const count = i < counts.length ? counts[i] : 0;
       contributions.push({
